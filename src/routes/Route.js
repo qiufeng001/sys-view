@@ -5,7 +5,7 @@ import Page from '../Page';
 
 function Route() {
   return (
-   <Page />
+   <div >eee</div>
   );
 }
 

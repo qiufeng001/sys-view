@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
-import * as Icon from 'antd';
-import { connectAlita } from 'redux-alita';
+import { Form, Input} from 'antd';
 import { RouteComponentProps } from 'react-router';
 import { FormProps } from 'antd/lib/form';
 
@@ -29,4 +27,4 @@ class Login extends React.Component<LoginProps> {
     }
 }
 
-export default connectAlita(['auth'])(Form.create());
+export default Login;
