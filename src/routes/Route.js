@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import './route.css';
+import './Route.css';
 import Page from '../Page';
 
 function Route() {
