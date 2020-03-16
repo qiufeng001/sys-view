@@ -5,7 +5,7 @@ import { FormProps } from 'antd/lib/form';
 import axios from 'axios';
 import baseconfig from "../../api/baseconfig";
 import '../../style/login.less';
-const base = baseconfig.Config.base;
+const base = baseconfig.Config.portalUrl;
 interface IProps {
     name: string,
     username: string,
@@ -76,7 +76,7 @@ class Login extends React.Component<LoginProps, IProps> {
     handleSubmit = (e: React.FormEvent) => {
         console.log(this.state);
         const params = this.state;
-        axios.post(`${base}/portal/user/userInfo?username=` + params.username, params,{
+        axios.post(`${base}/user/userInfo?username=` + params.username, params,{
             headers:{
                 
             }
