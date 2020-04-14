@@ -51,7 +51,7 @@ class Login extends React.Component<LoginProps, IProps> {
                 {
                     errMessage:'密码长度最为6',
                     test:(value) => {
-                        return value.length == 6;
+                        return value.length === 6;
                     }
                 }
             ]
@@ -66,7 +66,7 @@ class Login extends React.Component<LoginProps, IProps> {
         // console.log(newState);
         this.setState(newState);
         for(let key in this.query){
-            if(key == name){
+            if(key === name){
                 this.query[key].value = event.target.value;
             }
         }
