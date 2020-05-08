@@ -1,0 +1,20 @@
+.loginLink  {
+    text-align: right;
+}
+
+.registerLink  {
+    text-align: right;
+}
+
+.headerMain {
+    background: black;
+    height: 45px;
+    width: 100%;
+}
+.navbar-nav {
+    margin-left: 180px;
+}
+
+/** 鼠标悬停展开菜单 */
+/* .navbar-nav
+ > li:hover .dropdown-menu {display: block;} */

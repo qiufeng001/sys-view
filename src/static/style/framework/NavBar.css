@@ -1,0 +1,21 @@
+.delTab{
+    color: #00ffe7;
+    
+}
+
+.loginLink  {
+    text-align: right;
+}
+
+.registerLink  {
+    text-align: right;
+}
+
+.headerMain {
+    background: black;
+    height: 45px;
+    width: 100%;
+}
+.navbar-nav {
+    margin-left: 180px;
+}

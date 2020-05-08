@@ -4,7 +4,6 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Page from './Page';
 import { AlitaProvider, setConfig } from 'redux-alita';
-
 ReactDOM.render(
     <AlitaProvider>
         <Page />
