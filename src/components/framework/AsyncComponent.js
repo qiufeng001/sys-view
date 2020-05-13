@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import LoadBtn from './Loadbtn';
+
+/** 动态加载组件 */
 export default function asyncComponent(importComponent) {
   class AsyncComponent extends Component {
     constructor(props) {
@@ -24,7 +27,7 @@ export default function asyncComponent(importComponent) {
     }
     render() {
       const C = this.state.component;
-      return C ? <C {...this.props} /> : "加載中。。。";
+      return C ? <C {...this.props} /> : <LoadBtn />;
     }
   }
   return AsyncComponent;

@@ -2,33 +2,19 @@
  * Created by Yuicon on 2017/6/25.
  */
 import '../../static/style/framework/NavBar.css';
+import '../../static/style/pages/table.css';
 import '../../../src/static/libs/bootstrap/dist/css/bootstrap.min.css';
 import '../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 import React from 'react';
-import { Tabs, Button, Table, Pagination } from 'antd';
-import Icon from 'antd/lib/icon';
+import { Tabs, Button, Pagination } from 'antd';
 import 'antd/dist/antd.css';
-import AsyncComponent from './AsyncComponent.js';
 import TabPaneComponent from './TabPaneComponent'
-import { Menu, Dropdown } from 'antd';
-import DownOutlined from 'antd/es/icon';
 
 const { TabPane } = Tabs;
 interface IProps {
+    user: any;
     activeKey: string;
     panes: any;
-}
-
-class ToTabContent extends React.Component<any, ToTabContent>{
-    constructor(props) {
-        super(props)
-    }
-    render() {
-        //通过传入的name属性动态得到自己需要注入的组件，MyComponent首字母要大写
-        const MyComponent = Pagination[this.props.name]
-
-        return <MyComponent {...this.props} />
-    }
 }
 
 class NavBar extends React.Component<any, IProps> {
@@ -38,10 +24,11 @@ class NavBar extends React.Component<any, IProps> {
         super(props);
         this.tabIndex = 1;
         const panes = [
-            { title: '首页', key: '0', id: 'tab' },
+            { title: '首页', key: '0', id: 'menu_1' }
         ];
 
         this.state = {
+            user: this.props.user,
             activeKey: panes[0].key,
             panes
         };
@@ -59,8 +46,6 @@ class NavBar extends React.Component<any, IProps> {
 
     };
 
-
-
     onEdit = (targetKey, action) => {
         this[action](targetKey);
     };
@@ -74,8 +59,6 @@ class NavBar extends React.Component<any, IProps> {
         var textContent = target.textContent;
         var { panes } = this.state;
         var flag = false;
-        debugger
-
         panes.forEach((item) => {
             var exitsTabId = item.id;
             if (tabId == exitsTabId) {
@@ -86,7 +69,6 @@ class NavBar extends React.Component<any, IProps> {
             var activeKey = `${this.tabIndex++}`;
             panes.push({ title: textContent, key: activeKey, id: tabId, modul: modul });
             this.setState({ panes, activeKey });
-            // return <AsyncComponent component={import("./Login")} />;
         }
     };
 
@@ -112,20 +94,18 @@ class NavBar extends React.Component<any, IProps> {
     render() {
         return (
             <body>
-
-
-                <div className="navbar navbar-expand flex-column flex-md-row">
-                    <ul className="navbar-nav" id="menuTree">
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="" id="bd-versions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">v4.4  </a>
-                            <ul className="dropdown-menu" aria-labelledby="bd-versions">
-                                <button className="dropdown-item" name="/portal/Menu" id="menu_1" onClick={this.handleClickMenu}>百度</button>
-                                <button className="dropdown-item" name="www.baidu.com" id="menu_2" onClick={this.handleClickMenu}>v3 版本</button>
-                                <a className="dropdown-item" href="#" id="menu_3" onClick={this.handleClickMenu}>v2 版本</a>
-                                <a className="dropdown-item" href="#" id="menu_4" onClick={this.handleClickMenu}>所有版本</a>
-                            </ul>
-                        </li>
-                    </ul>
+                <div className="navbar navbar-expand flex-column flex-md-row headerMain">
+                    <div className="menu-main">
+                        <ul className="navbar-nav" id="menuTree">
+                            <li className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="" id="bd-versions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">基础管理系统</a>
+                                <ul className="dropdown-menu" aria-labelledby="bd-versions">
+                                    <button className="dropdown-item" name="/portal/Menu" id="menu_2" onClick={this.handleClickMenu}>菜单管理</button>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div className="login-user-main">欢迎：{this.state.user}</div>
                 </div>
                 <div className="pannal">
                     <Tabs
@@ -137,7 +117,7 @@ class NavBar extends React.Component<any, IProps> {
                     >
                         {this.state.panes.map(pane => (
                             <TabPane tab={pane.title} key={pane.key}>
-                                <TabPaneComponent modul={pane.modul}></TabPaneComponent>
+                                <TabPaneComponent modul={pane.modul} id={pane.id}></TabPaneComponent>
                             </TabPane>
                         ))}
                     </Tabs>

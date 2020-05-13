@@ -19,3 +19,14 @@
 .navbar-nav {
     margin-left: 180px;
 }
+
+.menu-main {
+    width: 90%;
+    float: left;
+}
+
+.login-user-main {
+    width: 10%;
+    float: right;
+    color: white;
+}

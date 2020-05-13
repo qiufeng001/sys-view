@@ -1,0 +1,28 @@
+/* 表格右上角查詢框樣式 */
+.bs-table-main {
+
+}
+
+.bs-search-table {
+    width: 80%;
+    box-sizing: 1px;
+    margin: 0 auto;
+}
+.bs-search-table td {
+    width: 10%;
+    text-align: center;
+}
+
+.bs-search-table input {
+    margin-top: 3px;
+}
+
+.form-inline {
+    margin-bottom: 2px;
+}
+
+/** 图标样式修改 */
+.react-bs-table-tool-bar .form-inline .btn-val-svg {
+    margin-left: -11px;
+    width: 81px;
+}

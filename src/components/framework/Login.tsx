@@ -3,9 +3,9 @@ import { Form, Input, Button, Checkbox} from 'antd';
 import { RouteComponentProps } from 'react-router';
 import { FormProps } from 'antd/lib/form';
 import axios from 'axios';
-import baseconfig from "../../api/baseconfig";
+import baseConfig from "../../api/baseConfig";
 import '../../static/style/login.less';
-const base = baseconfig.Config.portalUrl;
+const base = baseConfig.Config.baseUrl.portalUrl;
 interface IProps {
     name: string,
     username: string,

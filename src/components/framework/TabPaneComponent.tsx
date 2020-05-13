@@ -2,6 +2,7 @@ import React from 'react';
 import AsyncComponent from './AsyncComponent';
 interface IProps {
   url: string;
+  tabId: string;
 }
 
 class TabPaneComponent extends React.Component<any, IProps> {
@@ -10,14 +11,15 @@ class TabPaneComponent extends React.Component<any, IProps> {
 
     this.state = {
       url: this.props.modul == null || this.props.modul == undefined 
-          ? '/framework/NotFound' : '/pages' + this.props.modul,
+          ? '/framework/Home' : '/pages' + this.props.modul,
+          tabId: this.props.id
     };
   }
 
   render() {
     const TabComponent = AsyncComponent(() => import('../../components' + this.state.url));
     return (
-      <TabComponent />
+      <TabComponent tabId={this.state.tabId}/>
     )
   }
 }
