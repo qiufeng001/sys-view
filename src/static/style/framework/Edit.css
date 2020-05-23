@@ -1,0 +1,14 @@
+.bs-table-main .formHeader {
+    width: 100%;
+}
+
+.formHeader .titleDiv {
+    text-align: left;
+    display:  inline-block
+   
+}
+.formHeader .backDiv {
+    text-align: right;
+    display: inline-block;
+    float:right;
+}

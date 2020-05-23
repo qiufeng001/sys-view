@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import LoadBtn from './Loadbtn';
+import LoadBtn from '../../components/framework/Loadbtn';
 
 /** 动态加载组件 */
 export default function asyncComponent(importComponent) {

@@ -1,25 +1,31 @@
 import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
-var { BootstrapTable, TableHeaderColumn, SearchField } = require('react-bootstrap-table');
-import BaseBtn from '../../framework/BaseBtn';
+import BaseBtn from '../../../framework/BaseBtn';
+var { BootstrapTable, TableHeaderColumn, SearchField} = require('react-bootstrap-table');
+
 interface IProps {
+    moduleUrl: string;
     tabId: string;
     menus: any;
     operationBtns: any;
+    selectRow: Array<string>;
     pageNumber: number;
     pageSize: number;
 }
 
-class Menu extends React.Component<any, IProps> {
+class List extends React.Component<any, IProps> {
     constructor(props: Readonly<{}>) {
         super(props);
         this.state = {
+            moduleUrl: "/protal/menu",
             tabId: this.props.tabId,
             pageNumber: 1,
             pageSize: 10,
             menus: [],
-            operationBtns: []
+            operationBtns: [],
+            selectRow:[]
         };
+        this.execute =this.execute.bind(this);
     }
 
     componentDidMount = () => {
@@ -65,6 +71,7 @@ class Menu extends React.Component<any, IProps> {
         this.setState({ menus: menus });
     }
 
+
     /** 翻页查询事件 */
     onPageChange = (pageNumber, pageSize) => {
 
@@ -82,9 +89,57 @@ class Menu extends React.Component<any, IProps> {
 
     }
 
+    /**单个选择 */
+    handleRowSelect = (row, isSelected, e) => {
+        const selectRows = this.state.selectRow;
+        if(isSelected) {
+            selectRows.push(row.id);
+        }else{
+            for(var i=0;i < selectRows.length;i++) {
+                var exitRow = selectRows[i];
+                if(exitRow == row.id) {
+                    selectRows.splice(i, 1);
+                    break;
+                }
+            }
+        }
+    }
+    
+    /** 全选 */
+    handleSelectAll = (isSelected, rows) => {
+        const selectRows = this.state.selectRow;
+        if(isSelected) {
+            for(var i=0;i < rows.length;i++) {
+                var row = rows[i];
+                if(selectRows.indexOf(row) == -1) {
+                    selectRows.push(row.id);
+                }
+            }
+        }else{
+            selectRows.splice(0);
+        }
+    }
+
+    execute = (type) => {
+        var params = this.state.selectRow;
+        if(type == 'edit' || type == 'info') {
+            if(params.length == 0) {
+                alert("请选择操作对象！")
+                return;
+            }
+            if(params.length > 1) {
+                alert("请仅选择一个对象！")
+                return;
+            }
+        }
+        this.props.execute(type, this.state.selectRow);
+    }
+
     render() {
         const selectRow = {
-            mode: 'checkbox'
+            mode: 'checkbox',
+            onSelect: this.handleRowSelect,
+            onSelectAll: this.handleSelectAll
         };
 
         const options = {
@@ -104,6 +159,7 @@ class Menu extends React.Component<any, IProps> {
                 <div className="bs-search-main">
                     <Form onSubmitCapture={this.handleSearch} >
                         <table className="bs-search-table">
+                            <tbody>
                             <tr>
                                 <td>名称： </td>
                                 <td><Input type="text" /></td>
@@ -116,33 +172,37 @@ class Menu extends React.Component<any, IProps> {
                             </tr>
                             <tr>
                                 <td colSpan={8}>
-                                    <button className="login-form-button" onClick={this.handleSearch}>查询 </button>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button className="login-form-button" onClick={this.handleSearch} style={{ marginBottom: '2px' }}>重置 </button>
+                                    <button className="login-form-button" onClick={this.handleSearch}>查询 </button>&nbsp;&nbsp;&nbsp;&nbsp;
+ 
+                                    <button type="reset" className="login-form-button" style={{ marginBottom: '2px' }}>重置 </button>
                                 </td>
                             </tr>
+                            </tbody>
                         </table>
                     </Form>
                 </div>
                 <hr />
                 <div className="react-bs-table-tool-bar">
-                    <BaseBtn />
+                    <BaseBtn execute={this.execute} />
                 </div>
                 <BootstrapTable
                     data={this.state.menus}
                     striped hover pagination
                     selectRow={selectRow}
                     options={options}
+                    tableBodyClass='menu-tb'
+                   
                 >
                     <TableHeaderColumn isKey dataField='id'>Product ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='name' dataSort headerAlign='center'>Product Name</TableHeaderColumn>
                     <TableHeaderColumn dataField='sex' dataSort headerAlign='center'>Sex</TableHeaderColumn>
                     <TableHeaderColumn dataField='address' dataSort headerAlign='center'>Adress</TableHeaderColumn>
                     <TableHeaderColumn dataField='phone' dataSort headerAlign='center'>Phone</TableHeaderColumn>
+
                 </BootstrapTable>
             </div>
         )
     }
 }
 
-export default Menu;
+export default List;

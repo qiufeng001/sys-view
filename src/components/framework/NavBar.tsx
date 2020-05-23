@@ -93,14 +93,14 @@ class NavBar extends React.Component<any, IProps> {
 
     render() {
         return (
-            <body>
+            <header>
                 <div className="navbar navbar-expand flex-column flex-md-row headerMain">
                     <div className="menu-main">
                         <ul className="navbar-nav" id="menuTree">
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="" id="bd-versions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">基础管理系统</a>
                                 <ul className="dropdown-menu" aria-labelledby="bd-versions">
-                                    <button className="dropdown-item" name="/portal/Menu" id="menu_2" onClick={this.handleClickMenu}>菜单管理</button>
+                                    <button className="dropdown-item" name="/portal/menu" id="menu_2" onClick={this.handleClickMenu}>菜单管理</button>
                                 </ul>
                             </li>
                         </ul>
@@ -122,7 +122,7 @@ class NavBar extends React.Component<any, IProps> {
                         ))}
                     </Tabs>
                 </div>
-            </body>
+            </header>
         )
     }
 }

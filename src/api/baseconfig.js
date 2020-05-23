@@ -1,9 +1,10 @@
 const Config = {
     baseUrl: {
+        server:  "http://115.28.106.80/",
         // 交互的默认地址http://115.28.106.80/portal
-        portalUrl: "http://localhost/portal",
-        casUrl: "http://localhost/cas",
-        reactUrl: "http://localhost"
+        portalUrl: "http://115.28.106.80/portal",
+        casUrl: "http://115.28.106.80/cas",
+        reactUrl: "http://115.28.106.80"
     },
     bathCompPath: {
         
