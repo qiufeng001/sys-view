@@ -245,7 +245,7 @@ class List extends React.Component<any, IProps> {
                 >
                     <TableHeaderColumn isKey dataField='id' thStyle={ { 'hidden': 'hidden' } }>ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='name' dataSort headerAlign='center'>菜单名</TableHeaderColumn>
-                    <TableHeaderColumn dataField='code' dataSort headerAlign='center'>菜单code</TableHeaderColumn>
+                    <TableHeaderColumn dataField='code' dataSort headerAlign='center'>菜单编码</TableHeaderColumn>
                     <TableHeaderColumn dataField='url' dataSort headerAlign='center'>路径</TableHeaderColumn>
                     <TableHeaderColumn dataField='state' dataSort headerAlign='center' dataFormat={ this.stateFormatter }>状态</TableHeaderColumn>
                     <TableHeaderColumn dataField='operatio' dataSort headerAlign='center' dataFormat={ this.operationFormatter }>操作</TableHeaderColumn>

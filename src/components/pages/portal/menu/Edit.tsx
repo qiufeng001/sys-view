@@ -3,8 +3,8 @@ import qs from 'qs';
 import { FormGroup, FormControl, FormLabel, ButtonGroup, Button, FormCheck } from 'react-bootstrap';
 import '../../../../static/style/framework/Edit.css';
 import axios from 'axios';
-import baseConfig from "../../../../api/baseConfig";
-const portalUrl = baseConfig.Config.baseUrl.portalUrl;
+import baseUrl from "../../../../api/baseUrl";
+const menuUrl = baseUrl.portal.portal + "/menu/";
 interface IProps {
     title: string;
     params: Array<string>;
@@ -38,8 +38,9 @@ class Edit extends React.Component<any, IProps> {
         var parmsLength = this.state.params.length;
         if (parmsLength > 0) {
             this.setState({ title: "修改" });
+            debugger
             // 读取数据
-            axios.get(`${portalUrl}` + "/menu/001").then(res => {
+            axios.get(`${menuUrl}` + qs.stringify(this.state.params)).then(res => {
                 const data = res.data;
                 this.setState({ id: data.id, name: data.name, url: data.url == null ? "" : data.url })
             }).catch(err => {
@@ -120,7 +121,7 @@ class Edit extends React.Component<any, IProps> {
     }
 
     submit = (e: React.FormEvent) => {
-        var url = `${portalUrl}` + "/menu/create";
+        var url = `${menuUrl}` + "create";
         var menu = {
             id: this.state.id,
             code: this.state.code,

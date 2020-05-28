@@ -1,8 +1,8 @@
 import * as React from 'react';
 import axios from 'axios';
 import portalUrl from "../../api/portal";
+import baseUrl from "../../api/baseUrl";
 import NavBar from './NavBar';
-
 
 const isLogin = portalUrl.isLogin;
 const loginUser = portalUrl.loginUser;
@@ -30,8 +30,7 @@ class Index extends React.Component<Index, IProps> {
         axios.post(`${loginUser}`).then(res => {
             const msg = res.data.msg;
             if(msg ==  1001) {
-                // 115.28.106.80
-                window.location.href = 'http://115.28.106.80/cas/login?service=http://115.28.106.80/portal/cas/rediectToReact';
+                window.location.href =baseUrl.cas.login + "?service=" + baseUrl.portal.redirectToReact;
             }else{
                 this.handleInit(msg);
             }
