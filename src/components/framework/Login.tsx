@@ -116,7 +116,7 @@ class Login extends React.Component<LoginProps, IProps> {
                                 onClick={this.handleSubmit}
                             >
                                 登录
-                            </Button>                    
+                            </Button>          
                     </Form>
                 </div>
             </div>

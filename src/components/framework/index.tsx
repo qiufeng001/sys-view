@@ -26,19 +26,20 @@ class Index extends React.Component<Index, IProps> {
         }
     }
 
-    // componentDidMount = () => {
-    //     axios.post(`${loginUser}`).then(res => {
-    //         const msg = res.data.msg;
-    //         if(msg ==  1001) {
-    //             window.location.href = 'http://localhost/cas/login?service=http://localhost/portal/cas/rediectToReact';
-    //         }else{
-    //             this.handleInit(msg);
-    //         }
+    componentDidMount = () => {
+        axios.post(`${loginUser}`).then(res => {
+            const msg = res.data.msg;
+            if(msg ==  1001) {
+                // 115.28.106.80
+                window.location.href = 'http://115.28.106.80/cas/login?service=http://115.28.106.80/portal/cas/rediectToReact';
+            }else{
+                this.handleInit(msg);
+            }
             
-    //     }).catch(err => {
-    //         alert("系统出错！请联系管理员！")
-    //     });
-    // }
+        }).catch(err => {
+            alert("系统出错！请联系管理员！")
+        });
+    }
 
     handleInit = (user) => {
         this.setState({user: user});
@@ -48,8 +49,8 @@ class Index extends React.Component<Index, IProps> {
     render() {
         return (
             <div className="contaner">
-                {/* {this.state.initBar} */}
-                <NavBar />
+                {this.state.initBar}
+                {/* <NavBar /> */}
             </div>
         );
     }

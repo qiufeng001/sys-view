@@ -1,7 +1,12 @@
 import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
+import jQuery from "jquery";
 import BaseBtn from '../../../framework/BaseBtn';
-var { BootstrapTable, TableHeaderColumn, SearchField} = require('react-bootstrap-table');
+import qs from 'qs';
+import axios from 'axios';
+import baseConfig from "../../../../api/baseConfig";
+const portalUrl = baseConfig.Config.baseUrl.portalUrl;
+var { BootstrapTable, TableHeaderColumn, SearchField } = require('react-bootstrap-table');
 
 interface IProps {
     moduleUrl: string;
@@ -9,66 +14,53 @@ interface IProps {
     menus: any;
     operationBtns: any;
     selectRow: Array<string>;
-    pageNumber: number;
+    pageIndex: number;
     pageSize: number;
+    name: string;
+    code: string;
+    state: any;
 }
 
 class List extends React.Component<any, IProps> {
+    msg:any
     constructor(props: Readonly<{}>) {
         super(props);
         this.state = {
             moduleUrl: "/protal/menu",
             tabId: this.props.tabId,
-            pageNumber: 1,
-            pageSize: 10,
+            pageIndex: 1,
+            pageSize: 15,
             menus: [],
             operationBtns: [],
-            selectRow:[]
+            selectRow: [],
+            name: "", 
+            code:"", 
+            state: ""
         };
-        this.execute =this.execute.bind(this);
+        this.execute = this.execute.bind(this);
     }
 
     componentDidMount = () => {
-        var menus = [{
-            id: 1, name: "test", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 2, name: "test1", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 3, name: "test2", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 4, name: "test3", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 5, name: "test1", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 6, name: "test2", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 7, name: "test3", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 8, name: "test1", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 9, name: "test2", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 10, name: "test3", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 11, name: "test1", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 12, name: "test2", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 13, name: "test3", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 14, name: "test1", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 15, name: "test2", sex: "男", address: "h测试时", phone: "15900054828243sss"
-        }, {
-            id: 16, name: "test3", sex: "男", address: "h测试时", phone: "15900054828243"
-        }, {
-            id: 17, name: "test1", sex: "男", address: "h测试时", phone: "15900054828243"
-        }, {
-            id: 18, name: "test2", sex: "男", address: "h测试时", phone: "15900054828243"
-        }, {
-            id: 19, name: "test3", sex: "男", address: "h测试时", phone: "15900054828243"
-        }]
+        var menus = this.search()
         this.setState({ menus: menus });
+        const state = this.props.state;
+        if (state != undefined && state != "" && state != null) {
+            debugger
+            if (state == "success") {
+                jQuery("#stateDiv")[0].style.display = "inline";
+                jQuery(jQuery("#stateDiv")[0]).text("操作成功！")
+                setTimeout(() => {
+                    jQuery("#stateDiv")[0].style.display = "none";
+                }, 2000);
+            } else {
+                jQuery("#stateDiv")[0].style.display = "inline";
+                jQuery(jQuery("#stateDiv")[0]).text("操作失败！")
+                setTimeout(() => {
+                    jQuery("#stateDiv")[0].style.display = "none";
+                }, 2000);
+            }
+        }
+
     }
 
 
@@ -79,56 +71,108 @@ class List extends React.Component<any, IProps> {
 
     /** 查询表单处理 */
     handleSearch = () => {
-
+        this.search();
     }
 
     // 查询后台数据
     search = () => {
-        var pageNumber = this.state.pageNumber;
-        var pageSize = this.state.pageSize;
+        const pageIndex = this.state.pageIndex;
+        const pageSize = this.state.pageSize;
+        const params = {
+            rows: pageSize,
+            pageIndex: pageIndex,
+            paramsMap: {name: this.state.name, code: this.state.code, state: this.state.state}
+        };
 
+        const url = portalUrl + "/menu/list";
+        axios.post(url, qs.stringify(params)).then(res => {
+            const menus = res.data.rows;
+            this.setState({menus: menus})
+        }).catch(err => {
+            // data = [{msg : "error"}]
+        });;
     }
 
     /**单个选择 */
     handleRowSelect = (row, isSelected, e) => {
         const selectRows = this.state.selectRow;
-        if(isSelected) {
+        if (isSelected) {
             selectRows.push(row.id);
-        }else{
-            for(var i=0;i < selectRows.length;i++) {
+        } else {
+            for (var i = 0; i < selectRows.length; i++) {
                 var exitRow = selectRows[i];
-                if(exitRow == row.id) {
+                if (exitRow == row.id) {
                     selectRows.splice(i, 1);
                     break;
                 }
             }
         }
     }
-    
+
     /** 全选 */
     handleSelectAll = (isSelected, rows) => {
         const selectRows = this.state.selectRow;
-        if(isSelected) {
-            for(var i=0;i < rows.length;i++) {
+        if (isSelected) {
+            for (var i = 0; i < rows.length; i++) {
                 var row = rows[i];
-                if(selectRows.indexOf(row) == -1) {
+                if (selectRows.indexOf(row) == -1) {
                     selectRows.push(row.id);
                 }
             }
-        }else{
+        } else {
             selectRows.splice(0);
         }
     }
 
+    changeSeachParams = (feild, event) => {
+        const newState = {};
+        newState[feild] = event.target.value;
+        this.setState(newState);
+    }
+
+    stateFormatter = (cell, row) => {
+        var state = "";
+        if(row.state == 0) {
+            state = `<i class='glyphicon glyphicon-usd'></i> 冻结`;
+        }else {
+            state = `<i class='glyphicon glyphicon-usd'></i> 激活`;
+        }
+        return state;
+    }
+
+    operationFormatter = (cell, row) => {
+        
+        var opt = `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="edit(" + ${row.id} + ")" > 修改 </button> `;
+            opt += `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="delete(" + ${row.id} + ")" > 删除 </button>`;
+            opt += `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="info(" + ${row.id} + ")" > 查看 </button>`;
+        return opt;
+    }
+
+    edit = (type, params) => {
+        // 先重置面版类型
+        
+    }
+
+    /** 删除 */
+    delete = (type, params) => {
+
+    }
+    
+    /** 查看 */
+    info = (type, params) => {
+        
+    }
+    
+
     execute = (type) => {
         var params = this.state.selectRow;
-        if(type == 'edit' || type == 'info') {
-            if(params.length == 0) {
-                alert("请选择操作对象！")
+        if (type == 'edit' || type == 'info') {
+            if (params.length == 0) {
+                // Alert.Heading;
                 return;
             }
-            if(params.length > 1) {
-                alert("请仅选择一个对象！")
+            if (params.length > 1) {
+                // Alert.Heading
                 return;
             }
         }
@@ -160,23 +204,28 @@ class List extends React.Component<any, IProps> {
                     <Form onSubmitCapture={this.handleSearch} >
                         <table className="bs-search-table">
                             <tbody>
-                            <tr>
-                                <td>名称： </td>
-                                <td><Input type="text" /></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td> </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td colSpan={8}>
-                                    <button className="login-form-button" onClick={this.handleSearch}>查询 </button>&nbsp;&nbsp;&nbsp;&nbsp;
- 
+                                <tr>
+                                    <td>名称： </td>
+                                    <td><Input type="text" onChange={this.changeSeachParams.bind(this, "name")} /></td>
+                                    <td>代码：</td>
+                                    <td><Input type="text" onChange={this.changeSeachParams.bind(this, "code")} /></td>
+                                    <td>状态：</td>
+                                    <td>
+                                    <select className="form-control"onChange={this.changeSeachParams.bind(this, "state")} >
+                                        <option value={""}>...</option>
+                                        <option value={1}>激活</option>
+                                        <option value={0}>冻结</option>
+                                    </select>
+                                    </td>
+                                    <td> </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colSpan={8}>
+                                        <button className="login-form-button" onClick={this.handleSearch}>查询 </button>&nbsp;&nbsp;&nbsp;&nbsp;
                                     <button type="reset" className="login-form-button" style={{ marginBottom: '2px' }}>重置 </button>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </Form>
@@ -185,20 +234,21 @@ class List extends React.Component<any, IProps> {
                 <div className="react-bs-table-tool-bar">
                     <BaseBtn execute={this.execute} />
                 </div>
+                <div id="stateDiv">操作成功</div>
                 <BootstrapTable
                     data={this.state.menus}
                     striped hover pagination
                     selectRow={selectRow}
                     options={options}
                     tableBodyClass='menu-tb'
-                   
-                >
-                    <TableHeaderColumn isKey dataField='id'>Product ID</TableHeaderColumn>
-                    <TableHeaderColumn dataField='name' dataSort headerAlign='center'>Product Name</TableHeaderColumn>
-                    <TableHeaderColumn dataField='sex' dataSort headerAlign='center'>Sex</TableHeaderColumn>
-                    <TableHeaderColumn dataField='address' dataSort headerAlign='center'>Adress</TableHeaderColumn>
-                    <TableHeaderColumn dataField='phone' dataSort headerAlign='center'>Phone</TableHeaderColumn>
 
+                >
+                    <TableHeaderColumn isKey dataField='id' thStyle={ { 'hidden': 'hidden' } }>ID</TableHeaderColumn>
+                    <TableHeaderColumn dataField='name' dataSort headerAlign='center'>菜单名</TableHeaderColumn>
+                    <TableHeaderColumn dataField='code' dataSort headerAlign='center'>菜单code</TableHeaderColumn>
+                    <TableHeaderColumn dataField='url' dataSort headerAlign='center'>路径</TableHeaderColumn>
+                    <TableHeaderColumn dataField='state' dataSort headerAlign='center' dataFormat={ this.stateFormatter }>状态</TableHeaderColumn>
+                    <TableHeaderColumn dataField='operatio' dataSort headerAlign='center' dataFormat={ this.operationFormatter }>操作</TableHeaderColumn>
                 </BootstrapTable>
             </div>
         )
