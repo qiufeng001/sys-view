@@ -130,20 +130,20 @@ class List extends React.Component<any, IProps> {
         this.setState(newState);
     }
 
-    stateFormatter = (cell, row) => {
-        var state = "";
-        if(row.state == 0) {
-            state = `<i class='glyphicon glyphicon-usd'></i> 冻结`;
+    statusFormatter = (cell, row) => {
+        var statusStr = "";
+        if(row.status == 0) {
+            statusStr = `<i class='glyphicon glyphicon-usd'></i> 冻结`;
         }else {
-            state = `<i class='glyphicon glyphicon-usd'></i> 激活`;
+            statusStr = `<i class='glyphicon glyphicon-usd'></i> 激活`;
         }
-        return state;
+        return statusStr;
     }
 
     operationFormatter = (cell, row) => {
         
-        var opt = `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="edit(" + ${row.id} + ")" > 修改 </button> `;
-            opt += `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="delete(" + ${row.id} + ")" > 删除 </button>`;
+        var opt = `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="edit(" + ${row.id} + ")" > 修改 &nbsp;</button> `;
+            opt += `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="delete(" + ${row.id} + ")" > 删除&nbsp; </button>`;
             opt += `<button type="button" class="btn btn-primary glyphicon glyphicon-plus" onclick="info(" + ${row.id} + ")" > 查看 </button>`;
         return opt;
     }
@@ -243,11 +243,11 @@ class List extends React.Component<any, IProps> {
                     tableBodyClass='menu-tb'
 
                 >
-                    <TableHeaderColumn isKey dataField='id' thStyle={ { 'hidden': 'hidden' } }>ID</TableHeaderColumn>
+                    <TableHeaderColumn isKey dataField='id' visible={false}>ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='name' dataSort headerAlign='center'>菜单名</TableHeaderColumn>
                     <TableHeaderColumn dataField='code' dataSort headerAlign='center'>菜单编码</TableHeaderColumn>
                     <TableHeaderColumn dataField='url' dataSort headerAlign='center'>路径</TableHeaderColumn>
-                    <TableHeaderColumn dataField='state' dataSort headerAlign='center' dataFormat={ this.stateFormatter }>状态</TableHeaderColumn>
+                    <TableHeaderColumn dataField='state' dataSort headerAlign='center' dataFormat={ this.statusFormatter }>状态</TableHeaderColumn>
                     <TableHeaderColumn dataField='operatio' dataSort headerAlign='center' dataFormat={ this.operationFormatter }>操作</TableHeaderColumn>
                 </BootstrapTable>
             </div>

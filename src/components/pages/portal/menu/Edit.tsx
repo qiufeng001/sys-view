@@ -11,7 +11,7 @@ interface IProps {
     id: string;
     code: string;
     name: string;
-    state: number;
+    status: number;
     sequence: number;
     url: "";
     pId: "";
@@ -27,7 +27,7 @@ class Edit extends React.Component<any, IProps> {
             id: "",
             code: "",
             name: "",
-            state: 1,
+            status: 1,
             sequence: 1,
             url: "",
             pId: ""
@@ -40,9 +40,9 @@ class Edit extends React.Component<any, IProps> {
             this.setState({ title: "修改" });
             debugger
             // 读取数据
-            axios.get(`${menuUrl}` + qs.stringify(this.state.params)).then(res => {
+            axios.get(`${menuUrl}` + this.state.params[0]).then(res => {
                 const data = res.data;
-                this.setState({ id: data.id, name: data.name, url: data.url == null ? "" : data.url })
+                this.setState({ id: data.id,  code: data.code, name: data.name, url: data.url == null ? "" : data.url })
             }).catch(err => {
                 alert("系统出错！请联系管理员！")
             });
@@ -105,6 +105,7 @@ class Edit extends React.Component<any, IProps> {
 
     /**输入框事件 */
     handleChange = (name, event) => {
+        debugger
         var newState = {};
         newState[name] = event.target.value;
         this.setState(newState);
@@ -117,7 +118,7 @@ class Edit extends React.Component<any, IProps> {
 
     // 重置
     reset = (e: React.FormEvent) => {
-        this.setState({ name: "", url: "" });
+        this.setState({code:"", name: "", url: "", sequence:1 });
     }
 
     submit = (e: React.FormEvent) => {
@@ -126,7 +127,7 @@ class Edit extends React.Component<any, IProps> {
             id: this.state.id,
             code: this.state.code,
             name: this.state.name,
-            state: this.state.state,
+            status: this.state.status,
             sequence: this.state.sequence,
             url: this.state.url,
             pId: this.state.pId
@@ -178,14 +179,14 @@ class Edit extends React.Component<any, IProps> {
                                 <FormLabel>状态：</FormLabel>
                                 <div className="form-check">
                                     <input className="form-check-input" type="radio" name="exampleRadios" id="enableCheck" value="1" checked 
-                                        onChange={this.handleChange.bind(this, 'state')}/>
+                                        onChange={this.handleChange.bind(this, 'status')}/>
                                     <label className="form-check-label" htmlFor="enableCheck">
                                         激活
                                     </label>
                                 </div>&nbsp;&nbsp;&nbsp;
                                 <div className="form-check">
                                     <input className="form-check-input" type="radio" name="exampleRadios" id="disableCheck" value="0" 
-                                        onChange={this.handleChange.bind(this, 'state')}/>
+                                        onChange={this.handleChange.bind(this, 'status')}/>
                                     <label className="form-check-label" htmlFor="disableCheck">
                                         冻结
                                     </label>
