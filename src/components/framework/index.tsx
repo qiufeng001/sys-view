@@ -4,7 +4,6 @@ import portalUrl from "../../api/portal";
 import baseUrl from "../../api/baseUrl";
 import NavBar from './NavBar';
 
-const isLogin = portalUrl.isLogin;
 const loginUser = portalUrl.loginUser;
 
 interface IProps {
@@ -28,11 +27,11 @@ class Index extends React.Component<Index, IProps> {
 
     componentDidMount = () => {
         axios.post(`${loginUser}`).then(res => {
-            const msg = res.data.msg;
-            if(msg ==  1001) {
+            const code = res.data.msg;
+            if(code ==  1001) {
                 window.location.href =baseUrl.cas.login + "?service=" + baseUrl.portal.redirectToReact;
             }else{
-                this.handleInit(msg);
+                this.handleInit(code);
             }
             
         }).catch(err => {
@@ -49,7 +48,6 @@ class Index extends React.Component<Index, IProps> {
         return (
             <div className="contaner">
                 {this.state.initBar}
-                {/* <NavBar /> */}
             </div>
         );
     }

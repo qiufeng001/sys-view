@@ -6,6 +6,9 @@ import axios from 'axios';
 import baseUrl from "../../../../api/baseUrl";
 const menuUrl = baseUrl.portal.portal + "/menu/";
 interface IProps {
+
+    pIdSelect: string;
+    statusRadio: boolean;
     title: string;
     params: Array<string>;
     id: string;
@@ -22,6 +25,8 @@ class Edit extends React.Component<any, IProps> {
     constructor(props: Readonly<{}>) {
         super(props);
         this.state = {
+            pIdSelect: "",
+            statusRadio: true,
             title: "新增",
             params: this.props.params,
             id: "",
@@ -38,17 +43,38 @@ class Edit extends React.Component<any, IProps> {
         var parmsLength = this.state.params.length;
         if (parmsLength > 0) {
             this.setState({ title: "修改" });
-            debugger
             // 读取数据
             axios.get(`${menuUrl}` + this.state.params[0]).then(res => {
                 const data = res.data;
-                this.setState({ id: data.id,  code: data.code, name: data.name, url: data.url == null ? "" : data.url })
+                this.setState({
+                    id: data.id, code: data.code,
+                    name: data.name, url: data.url == null ? "" : data.url, pId: data.pId
+                })
             }).catch(err => {
                 alert("系统出错！请联系管理员！")
             });
         } else {
             this.setState({ title: "新增" })
         }
+
+        const commonMenuUrl = baseUrl.portal.portal + "/common/getMenu";
+        axios.get(`${commonMenuUrl}`).then(res => {
+            const data = res.data;
+            const selectOpt = new Array<String>();
+            var defaultOpt = `<option value='' >...</option>`;
+            selectOpt.push(defaultOpt);
+            data.forEach(element => {
+                if (element.id == this.state.pId) {
+                    defaultOpt += `<option value='${element.id}' selected >${element.name}(${element.code})</option>`;
+                } else {
+                    defaultOpt = `<option value='${element.id}'>${element.name}(${element.code})</option>`;
+                }
+                selectOpt.push(defaultOpt);
+            });
+            this.setState({ pIdSelect: defaultOpt });
+        }).catch(err => {
+            alert("系统出错！请联系管理员！")
+        });
     }
 
     /** 后退 */
@@ -105,20 +131,27 @@ class Edit extends React.Component<any, IProps> {
 
     /**输入框事件 */
     handleChange = (name, event) => {
-        debugger
-        var newState = {};
-        newState[name] = event.target.value;
+        const newState = {};
+        const value = event.target.value;
+        newState[name] = value;
+        if (name == "status") {
+            if (value == 0) {
+                this.setState({ statusRadio: false })
+            } else {
+                this.setState({ statusRadio: true })
+            }
+        }
         this.setState(newState);
         for (let key in this.query) {
             if (key === name) {
-                this.query[key].value = event.target.value;
+                this.query[key].value = value;
             }
         }
     };
 
     // 重置
     reset = (e: React.FormEvent) => {
-        this.setState({code:"", name: "", url: "", sequence:1 });
+        this.setState({ code: "", name: "", url: "", sequence: 1 });
     }
 
     submit = (e: React.FormEvent) => {
@@ -132,14 +165,19 @@ class Edit extends React.Component<any, IProps> {
             url: this.state.url,
             pId: this.state.pId
         };
-        debugger
         var data = qs.stringify(menu);
-
-        axios.post(url, data).then(res => {
+        axios({
+            method: "post",
+            url: url,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+            },
+            data: data
+        }).then((res) => {
             this.props.resFun("success");
         }).catch(err => {
             this.props.resFun("failed");
-        });;
+        });
 
     }
 
@@ -178,15 +216,15 @@ class Edit extends React.Component<any, IProps> {
                             <FormGroup>
                                 <FormLabel>状态：</FormLabel>
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="exampleRadios" id="enableCheck" value="1" checked 
-                                        onChange={this.handleChange.bind(this, 'status')}/>
+                                    <input className="form-check-input" type="radio" name="exampleRadios" id="enableCheck" value="1" checked={this.state.statusRadio}
+                                        onChange={this.handleChange.bind(this, 'status')} />
                                     <label className="form-check-label" htmlFor="enableCheck">
                                         激活
                                     </label>
                                 </div>&nbsp;&nbsp;&nbsp;
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="exampleRadios" id="disableCheck" value="0" 
-                                        onChange={this.handleChange.bind(this, 'status')}/>
+                                    <input className="form-check-input" type="radio" name="exampleRadios" id="disableCheck" value="0" checked={!(this.state.statusRadio)}
+                                        onChange={this.handleChange.bind(this, 'status')} />
                                     <label className="form-check-label" htmlFor="disableCheck">
                                         冻结
                                     </label>
@@ -199,16 +237,16 @@ class Edit extends React.Component<any, IProps> {
                                     placeholder="请输入url" />
                                 <FormControl.Feedback />
                             </FormGroup>
-                            <div className="form-group">
-                                <label >上级菜单:</label>
-                                <select className="form-control">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                </select>
-                            </div>
+                            <FormGroup>
+                                <FormLabel>路&nbsp;&nbsp;&nbsp;&nbsp;径：</FormLabel>
+                                <FormControl
+                                    id="tarifications_dropdown"
+                                    placeholder="select"
+                                    as="select"
+                                    onChange={this.handleChange.bind(this, "pId")}>
+                                    {this.state.pIdSelect}
+                                </FormControl>
+                            </FormGroup>
                             <div className="btn-gp">
                                 <button
                                     type="button"
@@ -230,7 +268,6 @@ class Edit extends React.Component<any, IProps> {
                     </div>
                 </div>
             </div>
-
         )
     }
 }

@@ -10,6 +10,17 @@ const Config = {
     },
     bathCompPath: {
         baseModul: "../../components/pages",
+    },
+    page: {
+        pageIndex: 1,
+        pageSize: 10,
+        prePage: "前一页",
+        nextPage: "后一页",
+        firstPage: "首页",
+        lastPage: "末页",
+        paginationSize: 3,
+        paginationShowsTotal: true,
+        noDataText: "没有数据！"
     }
 };
 
