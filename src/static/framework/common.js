@@ -23,11 +23,18 @@ export function showOprationState(state, msg) {
 }
 
 /** 验证操作方法是否执行 */
-export function validateHasParams(type, $currentComp) {
-    var params = $currentComp.state.selectRow;
+export function validateHasParams(type, $) {
+    var params = $.state.selectRow;
+    if(type === 'add') {
+        return true;
+    }
+    if(params == null || params == undefined) {
+        alert("请选择操作对象！");
+        return false;
+    }
     if (params.length == 0 && type !== 'add') {
         alert("请选择操作对象！")
-        // return false;
+        return false;
     }
     if (type == 'edit' || type == 'info') {
         if (params.length > 1) {
@@ -39,30 +46,30 @@ export function validateHasParams(type, $currentComp) {
 }
 
 /** 获取执行方法 */
-export function executeOperate(type, $currentComp, url) {
+export function executeOperate(type, $, url) {
     switch (type) {
         case 'add':
-            addOrEdit(type, $currentComp);
+            addOrEdit(type, $);
             break;
         case 'delete':
-            remove($currentComp, url);
+            remove($, url);
             break;
         case 'edit':
-            addOrEdit(type, $currentComp);
+            addOrEdit(type, $);
             break;
         case 'info':
-            info($currentComp, url);
+            info(type, $);
             break;
         case 'export':
-            exp($currentComp, url);
+            exp($, url);
             break;
     }
 
 }
 
 /** 选项 单选 */
-export function rowSelect(row, isSelected, $currentComp) {
-    const selectRows = $currentComp.state.selectRow;
+export function rowSelect(row, isSelected, $) {
+    const selectRows = $.state.selectRow;
     if (isSelected) {
         selectRows.push(row.id);
     } else {
@@ -77,8 +84,8 @@ export function rowSelect(row, isSelected, $currentComp) {
 }
 
 /** 选项 全选 */
-export function rowSelectAll(rows, isSelected, $currentComp) {
-    const selectRows = $currentComp.state.selectRow;
+export function rowSelectAll(rows, isSelected, $) {
+    const selectRows = $.state.selectRow;
     if (isSelected) {
         for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
@@ -91,42 +98,43 @@ export function rowSelectAll(rows, isSelected, $currentComp) {
     }
 }
 
-export function searchDatas(queryParams, url, $currentComp) {
+export function searchDatas(queryParams, url, $) {
     const seachUrl = url + "list";
     axios.post(seachUrl, qs.stringify(queryParams)).then(res => {
         const datas = res.data.rows;
-        $currentComp.setState({ datas: datas })
+        const total = res.data.total;
+        $.setState({ datas: datas, total: total })
     }).catch(err => {
         // data = [{msg : "error"}]
     });
 }
 
-export function infoDetail(url, $currentComp) {
-    const ifnoUrl = url + $currentComp.params[0];
-    axios.get(ifnoUrl).then(res => {
+export function infoDetail(url, $) {
+    const infoUrl = url + $.state.params[0];
+    axios.get(infoUrl).then(res => {
         const data = res.data.rows;
-        $currentComp.setState({ data: data })
+        $.setState({ data: data })
     }).catch(err => {
         // data = [{msg : "error"}]
     });
 }
 
-export function changeSeachParams($currentComp, feild, event) {
+export function changeSeachParams(feild, event, $) {
     const newState = {};
     newState[feild] = event.target.value;
-    $currentComp.setState(newState);
+    $.setState(newState);
 }
 
 /** 新增/修改 */
-function addOrEdit(type, $currentComp) {
+function addOrEdit(type, $) {
     // 先重置面版类型
-    $currentComp.props.updateContentType(type, $currentComp.state.selectRow);
+    $.props.updateContentType(type, $.state.selectRow);
 }
 
 /** 删除 */
-function remove($currentComp, url) {
+function remove($, url) {
     const deleteUrl = url + "delete";
-    const ids = $currentComp.state.selectRow;
+    const ids = $.state.selectRow;
     var idsStr = "";
     ids.forEach(element => {
         idsStr += element + ",";
@@ -135,7 +143,8 @@ function remove($currentComp, url) {
         paramsMap: { ids: idsStr }
     };
     axios.post(`${deleteUrl}`, qs.stringify(query)).then(res => {
-        searchDatas(url, $currentComp);
+        searchDatas(url, $);
+        $.setState({ selectRow: [] });
         showOprationState("success", "操作成功，删除" + res.data + "条数据！");
     }).catch(err => {
         showOprationState("failed", "操作失败！");
@@ -143,12 +152,12 @@ function remove($currentComp, url) {
 }
 
 /** 查看(此处只是跳转到显示页面) */
-function info(type, $currentComp) {
+function info(type, $) {
     // 先重置面版类型
-    $currentComp.props.updateContentType(type, $currentComp.state.selectRow);
+    $.props.updateContentType(type, $.state.selectRow);
 }
 
 /** 导出 */
-function exp($currentComp, url) {
+function exp($, url) {
 
 }

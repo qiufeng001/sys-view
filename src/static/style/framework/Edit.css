@@ -27,19 +27,20 @@
 
 
 
-.editForm{
+.editForm {
     width: 60%;
     height: auto;
     margin:0 auto;
-    border:1px solid lightgrey; border-width:0 1px;
+}
+.ant-form-item-label {
+    width: 100px;
 }
 
 .btn-gp {
     width: 100%;
     display:flex;
-    margin-left: 20%;
-    /* justify-content:center;
-    align-items:center */
+    justify-content:center;
+    align-items:center
 }
 
 #stateDiv {

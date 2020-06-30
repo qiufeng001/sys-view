@@ -6,15 +6,38 @@
     text-align: right;
 }
 
-.headerMain {
+#headerMain {
     background: black;
     height: 45px;
     width: 100%;
 }
+
+#main-page {
+    color: wheat;
+}
+
+#count-info{
+    background-color: black;
+    color: wheat;;
+}
+
 .navbar-nav {
     margin-left: 180px;
 }
 
+.login-user-main {
+    width: 10%;
+    float: right;
+    color: white;
+    width: 100px;
+}
+
+.base-info {
+    float: right;
+}
+.ant-layout-header {
+    display: inline;
+}
 /** 鼠标悬停展开菜单 */
 /* .navbar-nav
  > li:hover .dropdown-menu {display: block;} */

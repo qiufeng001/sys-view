@@ -13,11 +13,13 @@ const Config = {
     },
     page: {
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 20,
         prePage: "前一页",
         nextPage: "后一页",
         firstPage: "首页",
         lastPage: "末页",
+        total: 0,
+        sizePerPageList: [ 10, 20, 50, 100, 500, 1000],
         paginationSize: 3,
         paginationShowsTotal: true,
         noDataText: "没有数据！"

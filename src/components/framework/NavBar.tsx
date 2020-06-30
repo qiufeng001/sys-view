@@ -3,16 +3,15 @@
  */
 import '../../static/style/framework/NavBar.css';
 import '../../static/style/pages/table.css';
-import '../../../src/static/libs/bootstrap/dist/css/bootstrap.min.css';
-import '../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 import React from 'react';
-import { Tabs, Button, Pagination } from 'antd';
-import 'antd/dist/antd.css';
+import { Layout, Tabs, Menu, Breadcrumb} from 'antd';
 import TabPaneComponent from './TabPaneComponent'
+import 'antd/dist/antd.css';
 
+const { SubMenu } = Menu;
+const { Content } = Layout;
 const { TabPane } = Tabs;
 interface IProps {
-    user: any;
     activeKey: string;
     panes: any;
 }
@@ -28,22 +27,16 @@ class NavBar extends React.Component<any, IProps> {
         ];
 
         this.state = {
-            user: this.props.user,
+
             activeKey: panes[0].key,
             panes
         };
 
     }
 
-    /*翻页事件*/
-    onShowSizeChange(current, pageSize) {
-        this.props.searchGroupManage({ page: current, size: pageSize });
-    }
-
     /** 点击获取存在的当前页 */
     onChange = activeKey => {
         this.setState({ activeKey });
-
     };
 
     onEdit = (targetKey, action) => {
@@ -51,12 +44,13 @@ class NavBar extends React.Component<any, IProps> {
     };
 
     handleClickMenu = (event) => {
-        var target = event.target;
+        debugger
+        var node = event.item.node;
         // 组件所在路径
-        var modul = target.name;
-        var id = target.id;
+        var modul = node.title;
+        var id = node.id;
         var tabId = "tab_" + (id).substr(4, id.length);
-        var textContent = target.textContent;
+        var textContent = node.textContent;
         var { panes } = this.state;
         var flag = false;
         panes.forEach((item) => {
@@ -94,7 +88,7 @@ class NavBar extends React.Component<any, IProps> {
     render() {
         return (
             <header>
-                <div className="navbar navbar-expand flex-column flex-md-row headerMain">
+                {/* <div className="navbar navbar-expand flex-column flex-md-row" id="navbarheaderMain">
                     <div className="menu-main">
                         <ul className="navbar-nav" id="menuTree">
                             <li className="nav-item dropdown">
@@ -103,10 +97,22 @@ class NavBar extends React.Component<any, IProps> {
                                     <button className="dropdown-item" name="/portal/menu" id="menu_2" onClick={this.handleClickMenu}>菜单管理</button>
                                 </ul>
                             </li>
+                            <li className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="" id="bd-versions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">基础管理系统</a>
+                                <ul className="dropdown-menu" aria-labelledby="bd-versions">
+                                    <button className="dropdown-item" name="/portal/menu" id="menu_2" onClick={this.handleClickMenu}>菜单管理</button>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
-                    <div className="login-user-main">欢迎：{this.state.user}</div>
-                </div>
+                </div> */}
+                <Menu mode="horizontal">
+                    <SubMenu title=" 基础管理系统">
+                        <SubMenu title="系統管理">
+                            <Menu.Item key="1" title="/portal/menu" id="menu_2" onClick={this.handleClickMenu}>菜单管理</Menu.Item>
+                        </SubMenu>
+                    </SubMenu>
+                </Menu>
                 <div className="pannal">
                     <Tabs
                         hideAdd

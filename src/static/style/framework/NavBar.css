@@ -11,8 +11,8 @@
     text-align: right;
 }
 
-.headerMain {
-    background: black;
+#navbarheaderMain {
+    background: #ff00000d;
     height: 45px;
     width: 100%;
 }
@@ -25,8 +25,3 @@
     float: left;
 }
 
-.login-user-main {
-    width: 10%;
-    float: right;
-    color: white;
-}

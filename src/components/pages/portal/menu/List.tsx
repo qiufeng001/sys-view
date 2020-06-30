@@ -1,21 +1,41 @@
 import React from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Table } from 'antd';
 import BaseBtn from '../../../framework/BaseBtn';
 import baseUrl from "../../../../api/baseUrl";
 import baseConfig from "../../../../api/baseConfig";
-import {showOprationState, validateHasParams, searchDatas, changeSeachParams,
-    executeOperate, rowSelect, rowSelectAll} from '../../../../static/framework/common';
+import {
+    showOprationState, validateHasParams, searchDatas, changeSeachParams,
+    executeOperate} from '../../../../static/framework/common';
 const menuUrl = baseUrl.portal.portal + "/menu/";
 const basePage = baseConfig.Config.page;
-var { BootstrapTable, TableHeaderColumn, SearchField } = require('react-bootstrap-table');
+
+const columns = [
+    {
+        title: '名称',
+        dataIndex: 'name',
+    },
+    {
+        title: '编码',
+        dataIndex: 'code',
+    },
+    {
+        title: '路径',
+        dataIndex: 'url',
+    },
+    {
+        title: '状态',
+        dataIndex: 'status',
+    }
+];
 
 interface IProps {
     tabId: string;
     datas: any;
     operationBtns: any;
-    selectRow: Array<string>;
+    selectedRowKeys: Array<string>;
     pageIndex: number;
     pageSize: number;
+    total: number;
     name: string;
     code: string;
     state: any;
@@ -29,36 +49,34 @@ class List extends React.Component<any, IProps> {
             tabId: this.props.tabId,
             pageIndex: basePage.pageIndex,
             pageSize: basePage.pageSize,
+            total: basePage.total,
             datas: [],
             operationBtns: [],
-            selectRow: [],
+            selectedRowKeys: [],
             name: "",
             code: "",
             state: ""
-            
+
         };
         this.execute = this.execute.bind(this);
     }
-
-    
 
     componentDidMount = () => {
         var datas = this.search()
         this.setState({ datas: datas });
         const state = this.props.state;
         if (state != undefined && state != "" && state != null) {
-            if (state == "success") {
+            if (state === "success") {
                 showOprationState("success！")
             } else {
                 showOprationState("failed", "操作失败！")
             }
         }
-
     }
 
     /** 翻页查询事件 */
     onPageChange = (pageNumber, pageSize) => {
-        this.setState({pageIndex: pageNumber, pageSize: pageSize});
+        this.setState({ pageIndex: pageNumber, pageSize: pageSize });
         this.search();
     }
 
@@ -72,23 +90,17 @@ class List extends React.Component<any, IProps> {
         searchDatas(queryParams, menuUrl, this);
     }
 
-    /**单个选择 */
-    handleRowSelect = (row, isSelected, e) => {
-        rowSelect(row, isSelected, this);
-    }
-
-    /** 全选 */
-    handleSelectAll = (isSelected, rows) => {
-        rowSelectAll(rows, isSelected, this);    
-    }
+    onSelectChange = selectedRowKeys => {
+        this.setState({ selectedRowKeys });
+    };
 
     changeSeachParams = (feild, event) => {
-       
+        changeSeachParams(feild, event, this);
     }
 
     statusFormatter = (cell, row) => {
         var statusStr = "";
-        if (row.status == 0) {
+        if (row.status === 0) {
             statusStr = `<i class='glyphicon glyphicon-usd'></i> 冻结`;
         } else {
             statusStr = `<i class='glyphicon glyphicon-usd'></i> 激活`;
@@ -105,42 +117,62 @@ class List extends React.Component<any, IProps> {
 
     /** 方法执行 */
     execute = (type) => {
-        if(!validateHasParams(type, this)) {
+        if (!validateHasParams(type, this)) {
             return;
         };
         executeOperate(type, this, menuUrl);
-        if(type === "delete") {
+        if (type === "delete") {
             this.search();
         }
     }
 
     render() {
-        const selectRow = {
-            mode: 'checkbox',
-            onSelect: this.handleRowSelect,
-            onSelectAll: this.handleSelectAll
-        };
-
-        const options = {
-            prePage: basePage.prePage,
-            nextPage: basePage.nextPage,
-            firstPage: basePage.firstPage,
-            lastPage: basePage.lastPage,
-            paginationSize: basePage.paginationSize,
-            paginationShowsTotal: basePage.paginationShowsTotal,
-            noDataText: basePage.noDataText,
-            onPageChange: this.onPageChange
+        const selectedRowKeys = this.state.selectedRowKeys;
+        const rowSelection = {
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+            selections: [
+                Table.SELECTION_ALL,
+                Table.SELECTION_INVERT,
+                {
+                    key: 'odd',
+                    text: '奇数行',
+                    onSelect: changableRowKeys => {
+                        let newSelectedRowKeys = [];
+                        newSelectedRowKeys = changableRowKeys.filter((key, index) => {
+                            if (index % 2 !== 0) {
+                                return false;
+                            }
+                            return true;
+                        });
+                        this.setState({ selectedRowKeys: newSelectedRowKeys });
+                    },
+                },
+                {
+                    key: 'even',
+                    text: '偶数行',
+                    onSelect: changableRowKeys => {
+                        let newSelectedRowKeys = [];
+                        newSelectedRowKeys = changableRowKeys.filter((key, index) => {
+                            if (index % 2 !== 0) {
+                                return true;
+                            }
+                            return false;
+                        });
+                        this.setState({ selectedRowKeys: newSelectedRowKeys });
+                    },
+                },
+            ],
         };
 
         return (
             <div className="bs-table-main">
-                <hr />
                 <div className="bs-search-main">
                     <Form>
                         <table className="bs-search-table">
                             <tbody>
                                 <tr>
-                                    <td>名称： </td>
+                                    <td><label>名称：</label></td>
                                     <td><Input type="text" onChange={changeSeachParams.bind(this, "name")} /></td>
                                     <td>代码：</td>
                                     <td><Input type="text" onChange={this.changeSeachParams.bind(this, "code")} /></td>
@@ -165,25 +197,11 @@ class List extends React.Component<any, IProps> {
                         </table>
                     </Form>
                 </div>
-                <hr />
                 <div className="react-bs-table-tool-bar">
                     <BaseBtn execute={this.execute} />
                 </div>
                 <div id="stateDiv"></div>
-                <BootstrapTable
-                    data={this.state.datas}
-                    striped hover pagination
-                    selectRow={selectRow}
-                    options={options}
-                    tableBodyClass='menu-tb'
-                >
-                    <TableHeaderColumn isKey dataField='id' visible={false}>ID</TableHeaderColumn>
-                    <TableHeaderColumn dataField='name' dataSort headerAlign='center'>菜单名</TableHeaderColumn>
-                    <TableHeaderColumn dataField='code' dataSort headerAlign='center'>菜单编码</TableHeaderColumn>
-                    <TableHeaderColumn dataField='url' dataSort headerAlign='center'>路径</TableHeaderColumn>
-                    <TableHeaderColumn dataField='status' dataSort headerAlign='center' dataFormat={this.statusFormatter}>状态</TableHeaderColumn>
-                    <TableHeaderColumn dataField='operatio' dataSort headerAlign='center' dataFormat={this.operationFormatter}>操作</TableHeaderColumn>
-                </BootstrapTable>
+                <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.datas} />
             </div>
         )
     }

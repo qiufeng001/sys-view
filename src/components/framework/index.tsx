@@ -2,13 +2,12 @@ import * as React from 'react';
 import axios from 'axios';
 import portalUrl from "../../api/portal";
 import baseUrl from "../../api/baseUrl";
-import NavBar from './NavBar';
+import HeaderAndNav from './HeaderAndNav';
 
 const loginUser = portalUrl.loginUser;
 
 interface IProps {
     initBar: any;
-    user: any;
     ticket: string;
     isAuth: boolean;
 }
@@ -19,7 +18,6 @@ class Index extends React.Component<Index, IProps> {
         super(props);
         this.state = {
             initBar: AnalyserNode,
-            user: [],
             ticket: document.cookie,
             isAuth: false
         }
@@ -27,27 +25,27 @@ class Index extends React.Component<Index, IProps> {
 
     componentDidMount = () => {
         axios.post(`${loginUser}`).then(res => {
-            const code = res.data.msg;
+            const code = res.data.code;
             if(code ==  1001) {
                 window.location.href =baseUrl.cas.login + "?service=" + baseUrl.portal.redirectToReact;
             }else{
-                this.handleInit(code);
+                this.handleInit(res.data.msg);
             }
             
         }).catch(err => {
-            alert("系统出错！请联系管理员！")
+            alert("系统出错！请联系管理员！");
         });
     }
 
     handleInit = (user) => {
-        this.setState({user: user});
-        this.setState({initBar: <NavBar user={user} />});
+        this.setState({initBar: <HeaderAndNav user={user} />});
     }
 
     render() {
         return (
             <div className="contaner">
                 {this.state.initBar}
+                {/* <HeaderAndNav /> */}
             </div>
         );
     }

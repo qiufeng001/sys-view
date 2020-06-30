@@ -48,7 +48,7 @@ class Index extends React.Component<any, IProps> {
             )
         } else {
             return (
-                <Info params={this.state.params} backExecute={this.backExecute} />
+                <Info params={this.state.params} updateContentType={this.updateContentType} backExecute={this.backExecute} />
             )
         }
 
