@@ -63,11 +63,12 @@ class Head extends React.Component<any, IProps> {
     };
 
     handleClickMenu = (event) => {
+        debugger
         var node = event.item.node;
         // 组件所在路径
-        var modul = node.className;
-        var key = node.key;
-        var textContent = node.textContent;
+        var modul = node.title;
+        var key = node.value + 1;
+        var textContent = node.innerText;
         var { panes } = this.state;
         var flag = false;
         panes.forEach((item) => {
