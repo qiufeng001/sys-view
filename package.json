@@ -13,7 +13,7 @@
     "antd": "^4.3.1",
     "axios": "^0.19.2",
     "element-react": "^1.4.34",
-    "http-proxy-middleware": "^1.0.1",
+    "http-proxy-middleware": "^1.0.6",
     "icons": "^1.0.0",
     "jquery": "^3.5.0",
     "popper.js": "^1.16.1",
@@ -29,7 +29,10 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "redux-alita": "^2.1.5",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.10.2"
   },
   "scripts": {
     "start": "react-scripts start",

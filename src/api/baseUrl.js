@@ -1,5 +1,6 @@
 import baseConfig from './baseConfig';
 const portalUrl = baseConfig.Config.baseUrl.portalUrl;
+const basecodeUrl = baseConfig.Config.baseUrl.basecode;
 const server = baseConfig.Config.baseUrl.server;
 const BaseUrl = {
     serverUrl: {

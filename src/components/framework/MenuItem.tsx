@@ -47,20 +47,6 @@ class MenuItem extends React.Component<any, IProps> {
 
 
     render() {
-        const menu = (
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['3']}>
-                {
-                    this.state.menus.map(function (item) {
-                        return (<SubMenu key={item.id}
-                            title={item.name}>
-                            {item.childMenus.map((secItem) => (
-                                <Menu.Item key={item.childMenus.indexOf(secItem)} title={secItem.url} onClick={handleClickMenu}>{secItem.name}</Menu.Item>
-                            ))}
-                        </SubMenu>)
-                    })
-                }
-            </Menu>
-        );
         const baseInfo = (
             <Menu>
                 <Menu.Item>
@@ -73,18 +59,23 @@ class MenuItem extends React.Component<any, IProps> {
                     <a rel="noopener noreferrer" onClick={() => this.handleLogout()}> 退出</a>
                 </Menu.Item>
             </Menu>);
+
         const handleClickMenu = (event) => {
             this.props.handleClickMenu(event);
         }
+
         return (
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-                {
+               {
                     this.state.menus.map(function (item) {
                         return (<SubMenu key={item.id}
                             title={item.name}>
-                            {item.childMenus.map((secItem) => (
-                                <Menu.Item key={item.childMenus.indexOf(secItem)} title={secItem.url} onClick={handleClickMenu}>{secItem.name}</Menu.Item>
-                            ))}
+                                {item.childMenus != null ? 
+                                    item.childMenus.map((secItem) => (
+                                        <Menu.Item key={item.childMenus.indexOf(secItem)} title={secItem.url} onClick={handleClickMenu}>{secItem.name}</Menu.Item>
+                                    )) : ''
+                                }
+                                
                         </SubMenu>)
                     })
                 }

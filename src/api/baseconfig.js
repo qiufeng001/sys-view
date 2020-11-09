@@ -1,5 +1,7 @@
 // const server = "http://115.28.106.80/";
-const server = "http://localhost/";
+// const server = "http://localhost/";
+// 这里用于本地代理
+const server = "http://localhost:3000/";
 const Config = {
     baseUrl: {
         server:  server,

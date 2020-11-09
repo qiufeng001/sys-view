@@ -24,7 +24,8 @@ class Index extends React.Component<Index, IProps> {
     }
 
     componentDidMount = () => {
-        axios.post(`${loginUser}`).then(res => {
+        var loginUrl = `${loginUser}`;
+        axios.post(loginUrl).then(res => {
             const code = res.data.code;
             if(code ==  1001) {
                 window.location.href =baseUrl.cas.login + "?service=" + baseUrl.portal.redirectToReact;

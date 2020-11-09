@@ -4,7 +4,6 @@ import { Form, Input, Select, Radio } from 'antd';
 import '../../../../static/style/framework/Edit.css';
 import axios from 'axios';
 import baseUrl from "../../../../api/baseUrl";
-import { TimeSelect } from 'element-react';
 
 const menuUrl = baseUrl.portal.portal + "/menu/";
 interface IProps {
@@ -54,9 +53,10 @@ class Edit extends React.Component<any, IProps> {
 
     componentDidMount = () => {
         var params = this.state.params;
+        var pId = null;
         if (params != undefined && params.length > 0) {
             this.setState({ title: "修改" });
-            // 读取数据
+            // 读取数据  
             axios.get(`${menuUrl}` + this.state.params[0]).then(res => {
                 const data = res.data;
                 this.setState({
@@ -64,9 +64,7 @@ class Edit extends React.Component<any, IProps> {
                     name: data.name, url: data.url == null ? "" : data.url, pId: data.pId
                 })
 
-                // 加载下拉框
-                const commonMenuUrl = baseUrl.portal.portal + "/common/getMenu";
-                singleSelect(commonMenuUrl, data.pId, true, this);
+                pId = data.pId;
             }).catch(err => {
                 alert("系统出错！请联系管理员！")
             });
@@ -74,6 +72,9 @@ class Edit extends React.Component<any, IProps> {
             this.setState({ title: "新增" })
         }
 
+        // 加载下拉框
+        const commonMenuUrl = baseUrl.portal.portal + "/common/getMenu";
+        singleSelect(commonMenuUrl, pId, true, this);
 
         /** 单选下拉框 
           * currentVal: 对象原有值
@@ -112,9 +113,14 @@ class Edit extends React.Component<any, IProps> {
 
     /**输入框事件 */
     handleChange = (name, event) => {
-        debugger
-        const newState = {};
-        const value = event.target.value;
+        var newState = {};
+        var value = "";
+        if(name == 'pId') {
+            value = event;
+        }else {
+            value = event.target.value;
+        }
+         
         newState[name] = value;
         this.setState(newState);
     };

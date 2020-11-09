@@ -63,11 +63,10 @@ class Head extends React.Component<any, IProps> {
     };
 
     handleClickMenu = (event) => {
-        debugger
         var node = event.item.node;
         // 组件所在路径
         var modul = node.title;
-        var key = node.value + 1;
+        var key = node.value + 2;
         var textContent = node.innerText;
         var { panes } = this.state;
         var flag = false;
@@ -109,13 +108,6 @@ class Head extends React.Component<any, IProps> {
                 <Header>
                     <div className="logo" />
                     {this.state.menuItem}
-                    <Content style={{ padding: '0 0px' }}>
-                        <Breadcrumb style={{ margin: '16px 0' }}>
-                            <Breadcrumb.Item>Home</Breadcrumb.Item>
-                            <Breadcrumb.Item>List</Breadcrumb.Item>
-                            <Breadcrumb.Item>App</Breadcrumb.Item>
-                        </Breadcrumb>
-                    </Content>
                     <Tabs
                         hideAdd
                         onChange={this.onChange}

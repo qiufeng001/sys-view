@@ -24,7 +24,7 @@ export function showOprationState(state, msg) {
 
 /** 验证操作方法是否执行 */
 export function validateHasParams(type, $) {
-    var params = $.state.selectRow;
+    var params = $.state.selectedRowKeys;
     if(type === 'add') {
         return true;
     }
@@ -69,7 +69,7 @@ export function executeOperate(type, $, url) {
 
 /** 选项 单选 */
 export function rowSelect(row, isSelected, $) {
-    const selectRows = $.state.selectRow;
+    const selectRows = $.state.selectedRowKeys;
     if (isSelected) {
         selectRows.push(row.id);
     } else {
@@ -85,7 +85,7 @@ export function rowSelect(row, isSelected, $) {
 
 /** 选项 全选 */
 export function rowSelectAll(rows, isSelected, $) {
-    const selectRows = $.state.selectRow;
+    const selectRows = $.state.selectedRowKeys;
     if (isSelected) {
         for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
@@ -128,23 +128,28 @@ export function changeSeachParams(feild, event, $) {
 /** 新增/修改 */
 function addOrEdit(type, $) {
     // 先重置面版类型
-    $.props.updateContentType(type, $.state.selectRow);
+    $.props.updateContentType(type, $.state.selectedRowKeys);
 }
 
 /** 删除 */
 function remove($, url) {
     const deleteUrl = url + "delete";
-    const ids = $.state.selectRow;
+    const ids = $.state.selectedRowKeys;
     var idsStr = "";
-    ids.forEach(element => {
-        idsStr += element + ",";
-    });
+    for(var i = 0;i < ids.length;i++) {
+        var id = ids[i];
+        if(i < ids.length - 1) {
+            idsStr += id + ",";
+        }else{
+            idsStr += id;
+        }
+    }
     const query = {
         paramsMap: { ids: idsStr }
     };
     axios.post(`${deleteUrl}`, qs.stringify(query)).then(res => {
         searchDatas(url, $);
-        $.setState({ selectRow: [] });
+        $.setState({ selectedRowKeys: [] });
         showOprationState("success", "操作成功，删除" + res.data + "条数据！");
     }).catch(err => {
         showOprationState("failed", "操作失败！");
@@ -154,7 +159,7 @@ function remove($, url) {
 /** 查看(此处只是跳转到显示页面) */
 function info(type, $) {
     // 先重置面版类型
-    $.props.updateContentType(type, $.state.selectRow);
+    $.props.updateContentType(type, $.state.selectedRowKeys);
 }
 
 /** 导出 */
