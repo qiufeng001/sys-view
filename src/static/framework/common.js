@@ -100,13 +100,29 @@ export function rowSelectAll(rows, isSelected, $) {
 
 export function searchDatas(queryParams, url, $) {
     const seachUrl = url + "list";
-    axios.post(seachUrl, qs.stringify(queryParams)).then(res => {
+    // axios.post(seachUrl, qs.stringify(queryParams)).then(res => {
+    //     const datas = res.data.rows;
+    //     const total = res.data.total;
+    //     $.setState({ datas: datas, total: total })
+    // }).catch(err => {
+    //     // data = [{msg : "error"}]
+    // });
+
+    axios({
+        method: "post",
+        url: seachUrl,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        data: qs.stringify(queryParams)
+    }).then((res) => {
         const datas = res.data.rows;
         const total = res.data.total;
         $.setState({ datas: datas, total: total })
     }).catch(err => {
-        // data = [{msg : "error"}]
+        this.props.resFun("failed");
     });
+
 }
 
 export function infoDetail(url, $) {
@@ -120,6 +136,7 @@ export function infoDetail(url, $) {
 }
 
 export function changeSeachParams(feild, event, $) {
+    debugger
     const newState = {};
     newState[feild] = event.target.value;
     $.setState(newState);

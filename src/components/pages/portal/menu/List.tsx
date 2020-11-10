@@ -173,7 +173,7 @@ class List extends React.Component<any, IProps> {
                             <tbody>
                                 <tr>
                                     <td><label>名称：</label></td>
-                                    <td><Input type="text" onChange={changeSeachParams.bind(this, "name")} /></td>
+                                    <td><Input type="text" onChange={this.changeSeachParams.bind(this, "name")} /></td>
                                     <td>代码：</td>
                                     <td><Input type="text" onChange={this.changeSeachParams.bind(this, "code")} /></td>
                                     <td>状态：</td>
