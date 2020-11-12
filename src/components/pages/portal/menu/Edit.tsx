@@ -63,7 +63,7 @@ class Edit extends React.Component<any, IProps> {
                     id: data.id, code: data.code,
                     name: data.name, url: data.url == null ? "" : data.url, pId: data.pId
                 })
-
+                debugger
                 pId = data.pId;
             }).catch(err => {
                 alert("系统出错！请联系管理员！")
@@ -169,17 +169,17 @@ class Edit extends React.Component<any, IProps> {
                     <hr />
                     <Form {...layout} name="control-hooks">
                         <div className="editForm">
-                            <Form.Item name="code" label="编码" rules={[{ required: true }]} >
-                                <Input value={this.state.code} onChange={this.handleChange.bind(this, "code")} defaultValue={this.state.code}/>
+                            <Form.Item name="code" label="编码" rules={[{ required: true }]}>
+                                <Input value={this.state.code} onChange={this.handleChange.bind(this, "code")}/>
                             </Form.Item>
                             <Form.Item name="name" label="菜单名" rules={[{ required: true }]}>
                                 <Input value={this.state.name} onChange={this.handleChange.bind(this, "name")}/>
                             </Form.Item>
-                            <Form.Item name="sequence" label="排序" >
+                            <Form.Item name="sequence" label="排序" rules={[{ required: true }]}>
                                 <Input value={this.state.sequence} onChange={this.handleChange.bind(this, "sequence")}/>
                             </Form.Item>
                             <Form.Item name="status" label="状态" rules={[{ required: true }]}>
-                                <Radio.Group onChange={this.handleChange.bind(this, "status")} value={this.state.status} defaultValue={1}>
+                                <Radio.Group onChange={this.handleChange.bind(this, "status")} value={this.state.status}>
                                     <Radio value={1}>激活</Radio>
                                     <Radio value={0}>冻结</Radio>
                                 </Radio.Group>

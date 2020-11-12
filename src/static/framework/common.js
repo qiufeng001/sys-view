@@ -165,7 +165,7 @@ function remove($, url) {
         paramsMap: { ids: idsStr }
     };
     axios.post(`${deleteUrl}`, qs.stringify(query)).then(res => {
-        searchDatas(url, $);
+        searchDatas("", url, $);
         $.setState({ selectedRowKeys: [] });
         showOprationState("success", "操作成功，删除" + res.data + "条数据！");
     }).catch(err => {

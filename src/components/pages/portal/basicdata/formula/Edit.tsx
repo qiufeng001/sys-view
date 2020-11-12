@@ -97,14 +97,6 @@ class Edit extends React.Component<any, IProps> {
         this.props.backExecute(this.props.params);
     }
 
-    /**输入框事件 */
-    handleChange = (name, event) => {
-        const newState = {};
-        const value = event.target.value;
-        newState[name] = value;
-        this.setState(newState);
-    };
-
     // 重置
     reset = (e: React.FormEvent) => {
         this.setState({ name: "", steps: "", remark: "" });
@@ -149,13 +141,13 @@ class Edit extends React.Component<any, IProps> {
                     <hr />
                     <Form name="dynamic_form_nest_item" onFinish={onFinish} autoComplete="off">
                         <Form.Item name="name" label="名称" rules={[{ required: true }]}>
-                            <Input value={this.state.name}  onChange={this.handleChange.bind(this, "name")}/>
+                            <Input value={this.state.name}  />
                         </Form.Item>                           
                         <Form.Item name="steps" label="步骤">
-                            <TextArea value={this.state.steps} onChange={this.handleChange.bind(this, "steps")}/>
+                            <TextArea value={this.state.steps} />
                         </Form.Item>
                         <Form.Item name="remark" label="说明">
-                            <TextArea value={this.state.remark} onChange={this.handleChange.bind(this, "remark")}/>
+                            <TextArea value={this.state.remark} />
                         </Form.Item>
                         <div style={{textAlign:"center"}}>配料配比设置<hr/></div>
                         <Form.List name="details">
@@ -177,7 +169,7 @@ class Edit extends React.Component<any, IProps> {
                                                         fieldKey={[field.fieldKey, 'material']}
                                                         rules={[{ required: true, message: '请选择材料！' }]}
                                                     >
-                                                        <Select style={{ width: 130 }}>
+                                                        <Select style={{ width: 130 }} showSearch optionFilterProp="children">
                                                             {this.state.materials.map(item => (
                                                                 <Option key={item.id} value={item.id}>
                                                                     {item.name}

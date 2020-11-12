@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Input, Select, Upload, Modal } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Form, Input, Select, Upload } from 'antd';
+import ImgCrop from 'antd-img-crop';
 import '../../../../../static/style/framework/Edit.css';
 import axios from 'axios';
 import baseUrl from "../../../../../api/baseUrl";
@@ -16,10 +16,7 @@ interface IProps {
     attribute: string;
     efficacy: string;
     instructions: string;
-    previewVisible: boolean;
-    previewImage: string;
-    previewTitle: string;
-    fileList: Array<any>;
+    fileList:Array<any>;
 }
 
 const { Option } = Select;
@@ -34,14 +31,6 @@ const layout = {
     },
 };
 
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
 
 
 class Edit extends React.Component<any, IProps> {
@@ -57,10 +46,7 @@ class Edit extends React.Component<any, IProps> {
             attribute: "",
             efficacy: "",
             instructions: "",
-            previewVisible: false,
-            previewImage: '',
-            previewTitle: '',
-            fileList: []
+            fileList:[]
         };
     }
 
@@ -74,28 +60,10 @@ class Edit extends React.Component<any, IProps> {
                 this.setState({
                     id: data.id,
                     name: data.name,
-                    attribute: data.attribut,
+                    attribute: data.attribut, 
                     efficacy: data.efficacy,
                     instructions: data.instructions
                 });
-                var files = data.files;
-                if (files !== null) {
-                    var fileList = [{}];
-                    fileList = [];
-                    var uid = -1;
-                    for (var i = 0; i < files.length; i++) {
-                        var file = files[i];
-                        var fileObj = {
-                            "name": file.name,
-                            "uid": uid,
-                            "thumbUrl": file.thumbUrl,
-                            "type": "images/" + file.type
-                        };
-                        uid--;
-                        fileList.push(fileObj);
-                    }
-                    this.setState({ fileList: fileList });
-                }
             }).catch(err => {
                 alert("系统出错！请联系管理员！")
             });
@@ -128,12 +96,12 @@ class Edit extends React.Component<any, IProps> {
         var files = [{}];
         files = [];
         var fileList = this.state.fileList;
-        for (var i = 0; i < fileList.length; i++) {
+        for(var i = 0;i < fileList.length;i++) {
             var fileObject = fileList[i];
             var file = {
-                "name": fileObject.name,
-                "size": fileObject.size,
-                "type": fileObject.type,
+                "name":fileObject.name,
+                "size":fileObject.size,
+                "type":fileObject.type,
                 "thumbUrl": fileObject.thumbUrl
             }
             files.push(file);
@@ -145,7 +113,7 @@ class Edit extends React.Component<any, IProps> {
             attribute: this.state.attribute,
             efficacy: this.state.efficacy,
             instructions: this.state.instructions,
-            files: files
+            files:files
         };
 
         var data = JSON.stringify(menu);
@@ -164,89 +132,60 @@ class Edit extends React.Component<any, IProps> {
 
     }
 
-    handleCancel = () => this.setState({ previewVisible: false });
-
-    handlePreview = async file => {
-        if(file.lastModified !== undefined) {
-            if (!file.url && !file.preview) {
-                file.preview = await getBase64(file.originFileObj);
-            }
-    
-            this.setState({
-                previewImage: file.url || file.preview,
-                previewVisible: true,
-                previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
-            });
-        }else{
-            file.preview = file.thumbUrl;
-            this.setState({
-                previewImage: file.thumbUrl,
-                previewVisible: true,
-                previewTitle: file.name || file.url.substring(file.thumbUrl.lastIndexOf('/') + 1),
-            });
-        }
-        
-    };
-
     render() {
-        const { previewVisible, previewImage, fileList, previewTitle } = this.state;
-        const {name} = this.state;
         const changeUpload = ({ fileList: newFileList }) => {
-            this.setState({ fileList: newFileList });
+            debugger
+            this.setState({fileList:newFileList});
         };
 
-        const uploadButton = (
-            <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-            </div>
-        );
+        const onPreview = async file => {
+            let src = file.url;
+            if (!src) {
+              src = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file.originFileObj);
+                reader.onload = () => resolve(reader.result);
+              });
+            }
+            const image = new Image();
+            image.src = src;
+            const imgWindow = window.open(src);
+            imgWindow!.document.write(image.outerHTML);
+        };
 
         return (
-            
             <div className="bs-table-main">
                 <div className="formHeader">
-                    <div className="titleDiv">材料{this.state.title}</div>
+                    <div className="titleDiv">菜单{this.state.title}</div>
                     <div className="backDiv">
                         <button onClick={this.backExecute}>返回</button>
                     </div>
                     <hr />
-                    <Form {...layout} name="material-form">
+                    <Form {...layout} name="control-hooks">
                         <div className="editForm">
-                            <div style={{width: '100%', marginBottom: 4}}>
-                                <label style={{width: '40%'}}>名称：</label>
-                                <Input value={name} name="name" onChange={this.handleChange.bind(this, "name")} required style={{width: '60%'}}/>
-                            </div>
-                            <div style={{width: '100%', marginBottom: 4}}>
-                                <label style={{width: '40%'}}>名称：</label>
-                                <TextArea name="attribute" value={this.state.attribute} onChange={this.handleChange.bind(this, "attribute")} />
-                            </div>
+                            <Form.Item name="name" label="名称" rules={[{ required: true }]}>
+                                <Input value={this.state.name}  onChange={this.handleChange.bind(this, "name")}/>
+                            </Form.Item>                           
                             <Form.Item name="attribute" label="属性">
-                                <TextArea value={this.state.attribute} onChange={this.handleChange.bind(this, "attribute")} />
+                                <TextArea value={this.state.attribute} onChange={this.handleChange.bind(this, "attribute")}/>
                             </Form.Item>
                             <Form.Item name="efficacy" label="功效">
-                                <TextArea value={this.state.efficacy} onChange={this.handleChange.bind(this, "efficacy")} />
+                                <TextArea value={this.state.efficacy}  onChange={this.handleChange.bind(this, "efficacy")}/>
                             </Form.Item>
                             <Form.Item name="instructions" label="说明">
-                                <TextArea value={this.state.instructions} onChange={this.handleChange.bind(this, "instructions")} />
+                                <TextArea value={this.state.instructions}  onChange={this.handleChange.bind(this, "instructions")}/>
                             </Form.Item>
                             <Form.Item name="materialFile" label="材料图片">
-                                <Upload
-                                    listType="picture-card"
-                                    fileList={fileList}
-                                    onPreview={this.handlePreview}
-                                    onChange={changeUpload}
-                                >
-                                    {fileList.length >= 3 ? null : uploadButton}
-                                </Upload>
-                                <Modal
-                                    visible={previewVisible}
-                                    title={previewTitle}
-                                    footer={null}
-                                    onCancel={this.handleCancel}
-                                >
-                                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                                </Modal>
+                                <ImgCrop>
+                                    <Upload
+                                        listType="picture-card"
+                                        fileList={this.state.fileList}
+                                        onChange={changeUpload}
+                                        onPreview={onPreview}
+                                    >
+                                        {this.state.fileList.length < 5 && '+ Upload'}
+                                    </Upload>
+                                </ImgCrop>
                             </Form.Item>
                             <div className="btn-gp">
                                 <button
