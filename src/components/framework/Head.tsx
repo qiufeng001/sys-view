@@ -1,18 +1,12 @@
-/**
- * Created by Yuicon on 2017/6/25.
- */
-
 import React from 'react';
 import '../../../src/static/style/framework/Header.css';
-import { Layout, Menu, Dropdown, Tabs, Breadcrumb } from 'antd';
+import { Layout, Tabs } from 'antd';
 import MenuItem from './MenuItem';
 import baseUrl from "../../api/baseUrl";
 import axios from 'axios';
 import TabPaneComponent from './TabPaneComponent'
 import 'antd/dist/antd.css';
-const logoutUrl = baseUrl.portal.logout;
-const { Header, Content } = Layout;
-const { SubMenu } = Menu;
+const { Header } = Layout;
 const { TabPane } = Tabs;
 
 interface IProps {
@@ -29,7 +23,7 @@ class Head extends React.Component<any, IProps> {
         super(props);
         this.tabIndex = 1;
         const panes = [
-            { title: '首页', key: '0', id: 'menu_1' }
+            { title: '首页', key: '0', menuKey: '0'}
         ];
         this.state = {
             user: this.props.user,
@@ -66,19 +60,20 @@ class Head extends React.Component<any, IProps> {
         var node = event.item.node;
         // 组件所在路径
         var modul = node.title;
-        var key = node.value + 2;
+        var key = event.key;
         var textContent = node.innerText;
         var { panes } = this.state;
         var flag = false;
         panes.forEach((item) => {
-            var exitsKey = item.key;
+            debugger
+            var exitsKey = item.menuKey;
             if (key == exitsKey) {
                 flag = true;
             }
         });
         if (!flag) {
             var activeKey = `${this.tabIndex++}`;
-            panes.push({ title: textContent, key: activeKey, modul: modul });
+            panes.push({ title: textContent, key: activeKey, menuKey: key, modul: modul });
             this.setState({ panes, activeKey });
         }
     };

@@ -102,14 +102,10 @@ class Edit extends React.Component<any, IProps> {
         this.setState({ name: "", steps: "", remark: "" });
     }
 
-    submit = (e: React.FormEvent) => {
-       
-
-    }
-
     FormBody  = () => {
         var [form] = Form.useForm();
-
+        var {id, name, steps, remark, materials} = this.state;
+        form.setFieldsValue({"id": id, "name": name, "steps": steps,  "remark":  remark, "materials": materials});
         var onFinish = values => {
             var urlType = this.state.id == "" ? "createByJson" : "updateByJson";
             var url = `${menuUrl}` + urlType;
@@ -139,7 +135,10 @@ class Edit extends React.Component<any, IProps> {
                         <button onClick={this.backExecute}>返回</button>
                     </div>
                     <hr />
-                    <Form name="dynamic_form_nest_item" onFinish={onFinish} autoComplete="off">
+                    <Form name="dynamic_form_nest_item" onFinish={onFinish} autoComplete="off" form={form}>
+                        <Form.Item name="id" label="主键" hidden>
+                            <Input />
+                        </Form.Item>   
                         <Form.Item name="name" label="名称" rules={[{ required: true }]}>
                             <Input value={this.state.name}  />
                         </Form.Item>                           
@@ -213,7 +212,6 @@ class Edit extends React.Component<any, IProps> {
                                 <Button
                                 type="primary"
                                 htmlType="submit"
-                                onClick={this.submit}
                             >
                                 保存
                             </Button>

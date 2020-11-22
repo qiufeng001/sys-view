@@ -1,12 +1,9 @@
 import React from 'react';
 import '../../../src/static/style/framework/Header.css';
-import { Layout, Menu, Dropdown, Tabs, Breadcrumb } from 'antd';
+import { Layout, Menu, Dropdown, Tabs } from 'antd';
 import baseUrl from "../../api/baseUrl";
-import axios from 'axios';
-import TabPaneComponent from './TabPaneComponent'
 import 'antd/dist/antd.css';
 const logoutUrl = baseUrl.portal.logout;
-const { Header, Content } = Layout;
 const { SubMenu } = Menu;
 const { TabPane } = Tabs;
 
@@ -65,14 +62,14 @@ class MenuItem extends React.Component<any, IProps> {
         }
 
         return (
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+            <Menu theme="dark" mode="horizontal">
                {
                     this.state.menus.map(function (item) {
                         return (<SubMenu key={item.id}
                             title={item.name}>
                                 {item.childMenus != null ? 
                                     item.childMenus.map((secItem) => (
-                                        <Menu.Item key={item.childMenus.indexOf(secItem)} title={secItem.url} onClick={handleClickMenu}>{secItem.name}</Menu.Item>
+                                        <Menu.Item key={secItem.key} title={secItem.url} onClick={handleClickMenu}>{secItem.name}</Menu.Item>
                                     )) : ''
                                 }
                                 
