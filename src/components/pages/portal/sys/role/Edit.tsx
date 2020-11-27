@@ -1,22 +1,20 @@
 import React from 'react';
-import { Form, Input, Select, Button } from 'antd';
 import qs from 'qs';
+import { Form, Input, Select, Radio,Button } from 'antd';
 import '../../../../../static/style/framework/Edit.css';
 import axios from 'axios';
 import baseUrl from "../../../../../api/baseUrl";
-const { TextArea } = Input;
-const menuUrl = baseUrl.portal.portal + "/barbecue/";
 
+const menuUrl = baseUrl.portal.portal + "/role/";
 interface IProps {
-    opts: Array<any>;
+    opts: Array<{menuId:string, name:string,code:string}>;
     title: string;
     params: Array<string>;
     id: string;
+    roleNo: string;
     name: string;
-    method: string;
-    ingredients: string;
-    remark: string;
-    tag: string;
+    status: string;
+    createUser: string;
 }
 
 const { Option } = Select;
@@ -42,11 +40,10 @@ class Edit extends React.Component<any, IProps> {
             title: "新增",
             params: this.props.params,
             id: "",
+            roleNo: "",
             name: "",
-            method: "",
-            ingredients: "",
-            remark: "",
-            tag: ""
+            status: "",
+            createUser: ""
         };
     }
 
@@ -54,17 +51,12 @@ class Edit extends React.Component<any, IProps> {
         var params = this.state.params;
         if (params != undefined && params.length > 0) {
             this.setState({ title: "修改" });
-            // 读取数据
+            // 读取数据  
             axios.get(`${menuUrl}` + this.state.params[0]).then(res => {
                 const data = res.data;
                 this.setState({
-                    id: data.id,
-                    name: data.name,
-                    method: data.method,
-                    ingredients: data.ingredients,
-                    remark: data.remark,
-                    tag: data.tag
-                });
+                    id: data.id, roleNo: data.roleNo, name: data.name, status: data.status
+                })
             }).catch(err => {
                 alert("系统出错！请联系管理员！")
             });
@@ -78,23 +70,11 @@ class Edit extends React.Component<any, IProps> {
         this.props.backExecute(this.props.params);
     }
 
-    /**输入框事件 */
-    handleChange = (name, event) => {
-        const newState = {};
-        const value = event.target.value;
-        newState[name] = value;
-        this.setState(newState);
-    };
-
-    // 重置
-    reset = (e: React.FormEvent) => {
-        this.setState({ name: "", method: "", ingredients: "", remark: "", tag:"" });
-    }
-
-    FormBody = () => {
-        var {id, name,  method, ingredients, remark, tag} = this.state;
+    FormBody  = () => {
         var [form] = Form.useForm();
-        form.setFieldsValue({"id": id,"name": name, "method": method, "ingredients": ingredients, "remark": remark, "tag": tag});
+        var {id, name, roleNo, status} = this.state;
+        form.setFieldsValue({"id": id, "name": name, "roleNo": roleNo,  "status":  status});
+        
         var onFinish = values => {
             var urlType = this.state.id == "" ? "create" : "update";
             var url = `${menuUrl}` + urlType;
@@ -113,7 +93,7 @@ class Edit extends React.Component<any, IProps> {
                 this.props.resFun("success");
             }).catch(err => {
                 this.props.resFun("failed");
-            })
+            });
         };
 
         return (
@@ -124,45 +104,39 @@ class Edit extends React.Component<any, IProps> {
                         <button onClick={this.backExecute}>返回</button>
                     </div>
                     <hr />
-                    <div className="formBody">
-                        <Form name="barbecueForm" onFinish={onFinish} autoComplete="off" form={form}>
-                            <Form.Item name="id" label="主键" hidden>
-                                <Input />
-                            </Form.Item>   
-                            <Form.Item name="name" label="名称" rules={[{ required: true }]}>
-                                <Input />
-                            </Form.Item>       
-                            <Form.Item name="method" label="方法">
-                                <TextArea value={this.state.method} />
+                    <Form name="menuForm" form={form} onFinish={onFinish} autoComplete="off">
+                        <div className="editForm">
+                            <Form.Item name="roleNo" label="角色编号" rules={[{ required: true }]}>
+                                <Input value={roleNo} />
                             </Form.Item>
-                            
-                            <Form.Item name="ingredients" label="配料">
-                                <TextArea value={this.state.ingredients} />
+                            <Form.Item name="name" label="角色名" rules={[{ required: true }]}>
+                                <Input value={name} />
                             </Form.Item>
-                            <Form.Item name="tag" label="标签"  rules={[{ required: true }]}>
-                                <TextArea value={this.state.tag} />
+                            <Form.Item name="status" label="状态" rules={[{ required: true }]}>
+                                <Radio.Group value={status}>
+                                    <Radio value={1}>激活</Radio>
+                                    <Radio value={0}>冻结</Radio>
+                                </Radio.Group>
                             </Form.Item>
-                            <Form.Item name="remark" label="说明">
-                                <TextArea value={this.state.remark} />
-                            </Form.Item>
-                        
                             <div className="btn-gp">
-                                    <Button
-                                    type="primary"
+                                <Button
+                                    style={{ width: '10%' }}
                                     htmlType="submit"
                                 >
                                     保存
-                                </Button>
+                                </Button> &nbsp;
                             </div>
-                        </Form>
-                    </div>
+                        </div>
+
+                        <br />
+                    </Form>
                 </div>
             </div>
         );
     }
-    
+
     render() {
-        return (<this.FormBody />) 
+        return (<this.FormBody />)
     }
 }
 

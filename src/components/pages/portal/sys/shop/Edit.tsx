@@ -1,26 +1,30 @@
 import React from 'react';
-import { Form, Input, Button, Upload, Modal } from 'antd';
+import { Form, Upload, Input, Select, Radio, Button, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import '../../../../../static/style/framework/Edit.css';
 import axios from 'axios';
 import baseUrl from "../../../../../api/baseUrl";
-const { TextArea } = Input;
-const menuUrl = baseUrl.portal.portal + "/materials/";
 
+const menuUrl = baseUrl.portal.portal + "/shop/";
 interface IProps {
-    opts: Array<any>;
+    opts: Array<{id: string, name : string, account : string}>;
     title: string;
     params: Array<string>;
     id: string;
     name: string;
-    attribute: string;
-    efficacy: string;
-    instructions: string;
+    address: string;
+    phone: string;
+    tel: string;
+    status: number;
+    code:string;
+    header:string;
     previewVisible: boolean;
     previewImage: string;
     previewTitle: string;
     fileList: Array<any>;
 }
+
+const { Option } = Select;
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -30,7 +34,6 @@ function getBase64(file) {
         reader.onerror = error => reject(error);
     });
 }
-
 
 class Edit extends React.Component<any, IProps> {
     name: any
@@ -42,9 +45,12 @@ class Edit extends React.Component<any, IProps> {
             params: this.props.params,
             id: "",
             name: "",
-            attribute: "",
-            efficacy: "",
-            instructions: "",
+            address: "",
+            phone: "",
+            tel: "",
+            status: 1,
+            code:"",
+            header:"",
             previewVisible: false,
             previewImage: '',
             previewTitle: '',
@@ -54,18 +60,25 @@ class Edit extends React.Component<any, IProps> {
 
     componentDidMount = () => {
         var params = this.state.params;
+        var pId = null;
         if (params != undefined && params.length > 0) {
             this.setState({ title: "修改" });
-            // 读取数据
+            // 读取数据  
             axios.get(`${menuUrl}` + this.state.params[0]).then(res => {
                 const data = res.data;
                 this.setState({
-                    id: data.id,
+                    id: data.id, 
                     name: data.name,
-                    attribute: data.attribute,
-                    efficacy: data.efficacy,
-                    instructions: data.instructions
-                });
+                    address: data.address, 
+                    phone: data.phone, 
+                    tel: data.tel,
+                    status: data.status,
+                    header: data.header,
+                    code: data.code,
+                    previewVisible: false,
+                    previewImage: '',
+                    previewTitle: '',
+                })
                 var files = data.files;
                 if (files !== null) {
                     var fileList = [{}];
@@ -90,6 +103,30 @@ class Edit extends React.Component<any, IProps> {
         } else {
             this.setState({ title: "新增" })
         }
+         // 加载下拉框
+         const commonMenuUrl = baseUrl.portal.portal + "/user/list";
+         singleSelect(commonMenuUrl, this);
+
+          /** 单选下拉框 
+          * currentVal: 对象原有值
+          * isShowCode: 是否显示code
+          */
+         async function singleSelect(url, $) {
+            const opts = new Array<any>();
+            await axios.get(url).then(res => {
+                const data = res.data.rows;
+                data.forEach(element => {
+                    var user = {id : "", name : "", account: ""};
+                    user.id = element.id;
+                    user.name = element.name;
+                    user.account = element.account;
+                    opts.push(user);
+                });
+                $.setState({ opts: opts });
+            }).catch(err => {
+                alert("系统出错！请联系管理员！")
+            });
+        }
     }
 
     /** 后退 */
@@ -97,15 +134,13 @@ class Edit extends React.Component<any, IProps> {
         this.props.backExecute(this.props.params);
     }
 
-    /**输入框事件 */
     handleChange = (name, event) => {
-        const newState = {};
-        const value = event.target.value;
+        var newState = {};
+        var value = "";
+        value = event;
         newState[name] = value;
         this.setState(newState);
     };
-
-    handleCancel = () => this.setState({ previewVisible: false });
 
     handlePreview = async file => {
         if(file.lastModified !== undefined) {
@@ -129,22 +164,23 @@ class Edit extends React.Component<any, IProps> {
         
     };
 
+    handleCancel = () => this.setState({ previewVisible: false });
 
-    FormBody = () => {
+    FormBody  = () => {
         var [form] = Form.useForm();
+        var {id, name, address, status, phone, tel,code, header } = this.state;
         const { previewVisible, previewImage, fileList, previewTitle } = this.state;
-        const {id, name,attribute,efficacy,instructions } = this.state;
-        form.setFieldsValue({"id": id, "name": name, "attribute": attribute,  "efficacy":  efficacy, "instructions": instructions});
+        form.setFieldsValue({"id": id, "name": name, "address": address,  "status":  status, "phone": phone, "tel": tel, "code": code, "header": header});
         const changeUpload = ({ fileList: newFileList }) => {
             this.setState({ fileList: newFileList });
         };
-
         var onFinish = values => {
             var urlType = this.state.id == "" ? "createWithFile" : "updateWithFile";
             var url = `${menuUrl}` + urlType;
             if(this.state.id !== "") {
                 values.id = this.state.id;
             }
+            values.header = this.state.header;
             var files = [{}];
             files = [];
             fileList.forEach((item) => {
@@ -152,21 +188,21 @@ class Edit extends React.Component<any, IProps> {
                 files.push(file);
             });
             values.files = files;
-            var data = JSON.stringify(values);
+            var params = JSON.stringify(values);
             axios({
                 method: "post",
                 url: url,
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
-                data: data
+                data: params
             }).then((res) => {
                 this.props.resFun("success");
             }).catch(err => {
                 this.props.resFun("failed");
             });
         };
-
+    
         const uploadButton = (
             <div>
                 <PlusOutlined />
@@ -175,29 +211,52 @@ class Edit extends React.Component<any, IProps> {
         );
 
         return (
-            
             <div className="bs-table-main">
                 <div className="formHeader">
-                    <div className="titleDiv">材料{this.state.title}</div>
+                    <div className="titleDiv">菜单{this.state.title}</div>
                     <div className="backDiv">
                         <button onClick={this.backExecute}>返回</button>
                     </div>
                     <hr />
-                    <Form name="materialForm" form={form} onFinish={onFinish} autoComplete="off">
+                    <Form name="shopForm" form={form} onFinish={onFinish} autoComplete="off">
                         <div className="editForm">
+                            <Form.Item name="code" label="代码">
+                                <Input />
+                            </Form.Item>
                             <Form.Item name="name" label="名称">
                                 <Input />
                             </Form.Item>
-                            <Form.Item name="attribute" label="属性">
-                                <TextArea />
+                            <Form.Item name="phone" label="负责人手机">
+                                <Input />
                             </Form.Item>
-                            <Form.Item name="efficacy" label="功效">
-                                <TextArea />
+                            <Form.Item name="tel" label="门店电话">
+                                <Input />
                             </Form.Item>
-                            <Form.Item name="instructions" label="说明">
-                                <TextArea />
+                            <Form.Item name="address" label="门店地址">
+                                <Input />
                             </Form.Item>
-                            <Form.Item name="files" label="材料图片">
+                            <Form.Item name="status" label="状态">
+                                <Radio.Group value={this.state.status}>
+                                    <Radio value={1}>激活</Radio>
+                                    <Radio value={0}>冻结</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+                            <Form.Item label="负责人" name="header">
+                                <Select
+                                    key={header}
+                                    defaultValue={ header }
+                                    showSearch
+                                    onChange={this.handleChange.bind(this, "header")}
+                                >
+                                    <Option value='' >...</Option>                              
+                                    {
+                                        this.state.opts.map(item => (
+                                            <Select.Option key={item.id} defaultValue={this.state.header} value={item.id}>{item.name}({item.account})</Select.Option>
+                                        ))
+                                    }
+                                </Select>
+                            </Form.Item>
+                            <Form.Item name="files" label="门店图片">
                                 <Upload
                                     listType="picture-card"
                                     fileList={fileList}
@@ -209,7 +268,6 @@ class Edit extends React.Component<any, IProps> {
                                 <Modal
                                     visible={previewVisible}
                                     title={previewTitle}
-                                    footer={null}
                                     onCancel={this.handleCancel}
                                 >
                                     <img alt="example" style={{ width: '100%' }} src={previewImage} />
@@ -224,15 +282,16 @@ class Edit extends React.Component<any, IProps> {
                                 </Button> &nbsp;
                             </div>
                         </div>
+
                         <br />
                     </Form>
                 </div>
             </div>
-        )
+        );
     }
 
     render() {
-       return (<this.FormBody />);
+        return (<this.FormBody />)
     }
 }
 

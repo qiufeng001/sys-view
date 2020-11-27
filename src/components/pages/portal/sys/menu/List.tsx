@@ -1,21 +1,33 @@
 import React from 'react';
-import { Form, Input, Table,Button } from 'antd';
+import { Form, Input, Table } from 'antd';
 import BaseBtn from '../../../../framework/BaseBtn';
 import baseUrl from "../../../../../api/baseUrl";
 import baseConfig from "../../../../../api/baseconfig";
 import {
     showOprationState, validateHasParams, searchDatas, changeSeachParams,
     executeOperate} from '../../../../../static/framework/common';
-const menuUrl = baseUrl.portal.portal + "/formula/";
+const menuUrl = baseUrl.portal.portal + "/menu/";
 const basePage = baseConfig.Config.page;
 
 const columns = [
     {
         title: '名称',
         dataIndex: 'name',
-    },{
-        title: '说明',
-        dataIndex: 'remark',
+    },
+    {
+        title: '编码',
+        dataIndex: 'code',
+    },
+    {
+        title: '路径',
+        dataIndex: 'url',
+    },
+    {
+        title: '状态',
+        dataIndex: 'status',
+        render(status){
+            return status == 1 ? '激活':'冻结'
+        }
     }
 ];
 
@@ -28,7 +40,8 @@ interface IProps {
     pageSize: number;
     total: number;
     name: string;
-    efficacy: string;
+    code: string;
+    status: any;
 }
 
 class List extends React.Component<any, IProps> {
@@ -44,14 +57,15 @@ class List extends React.Component<any, IProps> {
             operationBtns: [],
             selectedRowKeys: [],
             name: "",
-            efficacy: ""
+            code: "",
+            status: ""
 
         };
         this.execute = this.execute.bind(this);
     }
 
     componentDidMount = () => {
-        var datas = this.search();
+        var datas = this.search()
         this.setState({ datas: datas });
         const state = this.props.state;
         if (state != undefined && state != "" && state != null) {
@@ -74,20 +88,27 @@ class List extends React.Component<any, IProps> {
         const queryParams = {
             pageSize: this.state.pageSize,
             pageIndex: this.state.pageIndex,
-            paramsMap: { 
-                name: this.state.name,
-                efficacy: this.state.efficacy
-            }
+            paramsMap: { name: this.state.name, code: this.state.code, status: this.state.status }
         }
         searchDatas(queryParams, menuUrl, this);
     }
 
-    onSelectChange = (selectedRowKeys, selectedRows) => {
+    onSelectChange = selectedRowKeys => {
         this.setState({ selectedRowKeys });
     };
 
     changeSeachParams = (feild, event) => {
         changeSeachParams(feild, event, this);
+    }
+
+    statusFormatter = (cell, row) => {
+        var statusStr = "";
+        if (row.status === 0) {
+            statusStr = `<i class='glyphicon glyphicon-usd'></i> 冻结`;
+        } else {
+            statusStr = `<i class='glyphicon glyphicon-usd'></i> 激活`;
+        }
+        return statusStr;
     }
 
     operationFormatter = (cell, row) => {
@@ -109,10 +130,44 @@ class List extends React.Component<any, IProps> {
     }
 
     render() {
+        const selectedRowKeys = this.state.selectedRowKeys;
         const rowSelection = {
-          onChange: this.onSelectChange,
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+            selections: [
+                Table.SELECTION_ALL,
+                Table.SELECTION_INVERT,
+                {
+                    key: 'odd',
+                    text: '奇数行',
+                    onSelect: changableRowKeys => {
+                        let newSelectedRowKeys = [];
+                        newSelectedRowKeys = changableRowKeys.filter((key, index) => {
+                            if (index % 2 !== 0) {
+                                return false;
+                            }
+                            return true;
+                        });
+                        this.setState({ selectedRowKeys: newSelectedRowKeys });
+                    },
+                },
+                {
+                    key: 'even',
+                    text: '偶数行',
+                    onSelect: changableRowKeys => {
+                        let newSelectedRowKeys = [];
+                        newSelectedRowKeys = changableRowKeys.filter((key, index) => {
+                            if (index % 2 !== 0) {
+                                return true;
+                            }
+                            return false;
+                        });
+                        this.setState({ selectedRowKeys: newSelectedRowKeys });
+                    },
+                },
+            ],
         };
-    
+
         return (
             <div className="bs-table-main">
                 <div className="bs-search-main">
@@ -121,16 +176,25 @@ class List extends React.Component<any, IProps> {
                             <tbody>
                                 <tr>
                                     <td><label>名称：</label></td>
-                                    <td><Input type="text" onChange={this.changeSeachParams.bind(this, "name")} /></td>   
-                                    <td><label>说明：</label></td>
-                                    <td><Input type="text" onChange={this.changeSeachParams.bind(this, "remark")} /></td>
+                                    <td><Input type="text" onChange={this.changeSeachParams.bind(this, "name")} /></td>
+                                    <td>代码：</td>
+                                    <td><Input type="text" onChange={this.changeSeachParams.bind(this, "code")} /></td>
+                                    <td>状态：</td>
                                     <td>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;<button className="login-form-button" onClick={this.search}>查询 </button>&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <button type="reset" className="login-form-button" style={{ marginBottom: '2px' }}>重置 </button>
-                                    </td>                                
+                                        <select style={{width: '70px'}} className="form-control" onChange={this.changeSeachParams.bind(this, "status")} >
+                                            <option value={""}>...</option>
+                                            <option value={1}>激活</option>
+                                            <option value={0}>冻结</option>
+                                        </select>
+                                    </td>
+                                    <td> </td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                   
+                                    <td colSpan={8}>
+                                        <button className="login-form-button" onClick={this.search}>查询 </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="reset" className="login-form-button" style={{ marginBottom: '2px' }}>重置 </button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

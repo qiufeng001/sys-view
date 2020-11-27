@@ -11,7 +11,7 @@ const { TabPane } = Tabs;
 
 interface IProps {
     menuItem: any;
-    user: string;
+    user: any;
     panes: any;
     activeKey: string;
 }
@@ -38,7 +38,7 @@ class Head extends React.Component<any, IProps> {
         const url = baseUrl.portal.portal + "/menu/menus"
         axios.post(url).then(res => {
             const menuItems = res.data;
-            const menuItem = <MenuItem menuItems={menuItems} handleClickMenu={this.handleClickMenu} />
+            const menuItem = <MenuItem menuItems={menuItems} handleClickMenu={this.handleClickMenu} user={this.state.user} />
             this.setState({ menuItem: menuItem });
         }).catch(err => {
             alert("系统出错！请联系管理员！");
@@ -65,7 +65,6 @@ class Head extends React.Component<any, IProps> {
         var { panes } = this.state;
         var flag = false;
         panes.forEach((item) => {
-            debugger
             var exitsKey = item.menuKey;
             if (key == exitsKey) {
                 flag = true;

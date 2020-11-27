@@ -1,4 +1,4 @@
-import baseConfig from './baseConfig';
+import baseConfig from './baseconfig';
 const portalUrl = baseConfig.Config.baseUrl.portalUrl;
 const basecodeUrl = baseConfig.Config.baseUrl.basecode;
 const server = baseConfig.Config.baseUrl.server;

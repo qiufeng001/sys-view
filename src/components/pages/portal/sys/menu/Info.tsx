@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Form, Input, Button, Select, Radio } from 'antd';
-import baseUrl from "../../../../api/baseUrl";
+import baseUrl from "../../../../../api/baseUrl";
 const menuUrl = baseUrl.portal.portal + "/menu/";
 interface IProps {
     params: Array<string>;

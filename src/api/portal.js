@@ -1,4 +1,4 @@
-import baseConfig from './baseConfig';
+import baseConfig from './baseconfig';
 const portalUrl = baseConfig.Config.baseUrl.portalUrl;
 const Portal = {
     // 交互的默认地址

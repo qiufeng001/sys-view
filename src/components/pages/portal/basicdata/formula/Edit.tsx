@@ -17,6 +17,7 @@ interface IProps {
     steps: string;
     remark: string;
     materials:Array<any>;
+    fields:Array<any>;
 }
 
 const { Option } = Select;
@@ -45,7 +46,8 @@ class Edit extends React.Component<any, IProps> {
             name: "",
             steps: "",
             remark: "",
-            materials: []
+            materials: [],
+            fields:[]
         };
     }
 
@@ -60,7 +62,8 @@ class Edit extends React.Component<any, IProps> {
                     id: data.id,
                     name: data.name,
                     steps: data.steps,
-                    remark: data.remark
+                    remark: data.remark,
+                    fields: data.details
                 });
             }).catch(err => {
                 alert("系统出错！请联系管理员！")

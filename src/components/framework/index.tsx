@@ -28,11 +28,10 @@ class Index extends React.Component<Index, IProps> {
         axios.post(loginUrl).then(res => {
             const code = res.data.code;
             if(code ==  1001) {
-                window.location.href =baseUrl.cas.login + "?service=" + baseUrl.portal.redirectToReact;
+                window.location.href =baseUrl.cas.login + "?service=http://localhost/portal/cas/redirectToReact";
             }else{
-                this.handleInit(res.data.msg);
+                this.handleInit(res.data.user);
             }
-            
         }).catch(err => {
             alert("系统出错！请联系管理员！");
         });

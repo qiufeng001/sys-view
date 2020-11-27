@@ -1,23 +1,21 @@
 import React from 'react';
 import qs from 'qs';
-import { Form, Input, Select, Radio } from 'antd';
-import '../../../../static/style/framework/Edit.css';
+import { Form, Input, Select, Radio,Button } from 'antd';
+import '../../../../../static/style/framework/Edit.css';
 import axios from 'axios';
-import baseUrl from "../../../../api/baseUrl";
-import Item from 'antd/lib/list/Item';
+import baseUrl from "../../../../../api/baseUrl";
 
-const menuUrl = baseUrl.portal.portal + "/menu/";
+const menuUrl = baseUrl.portal.portal + "/user/";
 interface IProps {
     opts: Array<{menuId:string, name:string,code:string}>;
     title: string;
     params: Array<string>;
     id: string;
-    code: string;
+    account: string;
     name: string;
     status: number;
-    sequence: number;
-    url: "";
-    pId: "";
+    remark: string;
+    submited:boolean;
 }
 
 const { Option } = Select;
@@ -43,12 +41,11 @@ class Edit extends React.Component<any, IProps> {
             title: "新增",
             params: this.props.params,
             id: "",
-            code: "",
+            account: "",
             name: "",
             status: 1,
-            sequence: 1,
-            url: "",
-            pId: ""
+            remark: "",
+            submited:true
         };
     }
 
@@ -61,26 +58,26 @@ class Edit extends React.Component<any, IProps> {
             axios.get(`${menuUrl}` + this.state.params[0]).then(res => {
                 const data = res.data;
                 this.setState({
-                    id: data.id, code: data.code,
-                    name: data.name, url: data.url == null ? "" : data.url, pId: data.pId
+                    id: data.id, account: data.account,
+                    name: data.name, status: data.status, remark: data.remark
                 })
                 pId = data.pId;
-                 // 加载下拉框
-                const commonMenuUrl = baseUrl.portal.portal + "/common/getMenu";
-                singleSelect(commonMenuUrl, pId, true, this);
+
             }).catch(err => {
                 alert("系统出错！请联系管理员！")
             });
         } else {
             this.setState({ title: "新增" })
         }
-       
+        // 加载下拉框
+        const commonMenuUrl = baseUrl.portal.portal + "/common/getMenu";
+        singleSelect(commonMenuUrl, this);
 
         /** 单选下拉框 
           * currentVal: 对象原有值
           * isShowCode: 是否显示code
           */
-         async function singleSelect(url, parentVal, isShowCode, $) {
+         async function singleSelect(url, $) {
             const opts = new Array<any>();
             await axios.get(url).then(res => {
                 const data = res.data;
@@ -104,29 +101,36 @@ class Edit extends React.Component<any, IProps> {
     }
 
     /**输入框事件 */
-    handleChange = (name, event) => {
-        var newState = {};
-        var value = "";
-        if(name == 'pId') {
-            value = event;
-        }else {
-            value = event.target.value;
-        }
-         
-        newState[name] = value;
-        this.setState(newState);
+    validateAccount = (name, event) => {
+        var params = {"account": event.target.value};
+        this.setState({ title: "修改" });
+        var url = baseUrl.portal + "/common/validate"
+        // 读取数据  
+        axios({
+            method: "post",
+            url: url,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+            },
+            data: qs.stringfy(params)
+        }).then((res) => {
+            debugger
+            if(res.data > 0) {
+                this.setState({submited: false});
+            }
+        }).catch(err => {
+            this.props.resFun("failed");
+        });
+        
     };
-
-    // 重置
-    reset = (e: React.FormEvent) => {
-        this.setState({ code: "", name: "", url: "", sequence: 1 });
-    }
 
     FormBody  = () => {
         var [form] = Form.useForm();
-        var {id, name, code, status, url, sequence,pId} = this.state;
-        form.setFieldsValue({"id": id, "name": name, "code": code,  "status":  status, "url": url, "sequence": sequence, "pId":pId});
+        var {id, name, account, status, remark} = this.state;
+        form.setFieldsValue({"id": id, "name": name, "account": account,  "status":  status});
+        
         var onFinish = values => {
+            debugger
             var urlType = this.state.id == "" ? "create" : "update";
             var url = `${menuUrl}` + urlType;
             if(this.state.id !== "") {
@@ -155,55 +159,30 @@ class Edit extends React.Component<any, IProps> {
                         <button onClick={this.backExecute}>返回</button>
                     </div>
                     <hr />
-                    <Form {...layout} name="control-hooks" form={form} onFinish={onFinish} autoComplete="off">
+                    <Form name="menuForm" form={form} onFinish={onFinish} autoComplete="off">
                         <div className="editForm">
-                            <Form.Item name="code" label="编码" rules={[{ required: true }]}>
-                                <Input value={this.state.code} onChange={this.handleChange.bind(this, "code")}/>
+                            <Form.Item name="name" label="名称" rules={[{ required: true }]}>
+                                <Input />
                             </Form.Item>
-                            <Form.Item name="name" label="菜单名" rules={[{ required: true }]}>
-                                <Input value={this.state.name} onChange={this.handleChange.bind(this, "name")}/>
-                            </Form.Item>
-                            <Form.Item name="sequence" label="排序" rules={[{ required: true }]}>
-                                <Input value={this.state.sequence} onChange={this.handleChange.bind(this, "sequence")}/>
+                            <Form.Item name="account" label="账号" rules={[{ required: true }]}>
+                                <Input onChange={this.validateAccount.bind(this, "account")} />
                             </Form.Item>
                             <Form.Item name="status" label="状态" rules={[{ required: true }]}>
-                                <Radio.Group onChange={this.handleChange.bind(this, "status")} value={this.state.status}>
+                                <Radio.Group>
                                     <Radio value={1}>激活</Radio>
                                     <Radio value={0}>冻结</Radio>
                                 </Radio.Group>
                             </Form.Item>
-                            <Form.Item label="路径">
-                                <Input value={this.state.url} onChange={this.handleChange.bind(this, "url")}/>
-                            </Form.Item>
-                            <Form.Item label="上級菜单" >
-                                <Select
-                                    onChange={this.handleChange.bind(this, "pId")}
-                                    key={pId}
-                                    defaultValue={ pId }
-                                    showSearch
-                                >
-                                    <Option value='' >...</Option>                              
-                                    {
-                                        this.state.opts.map(item => (
-                                            <Select.Option key={item.menuId} defaultValue={this.state.pId} value={item.menuId}>{item.name}({item.code})</Select.Option>
-                                        ))
-                                    }
-                                </Select>
+                            <Form.Item label="说明" name="remark">
+                                <Input />
                             </Form.Item>
                             <div className="btn-gp">
-                                <button
-                                    type="button"
+                                <Button
                                     style={{ width: '10%' }}
+                                    htmlType="submit"
                                 >
                                     保存
-                                </button> &nbsp;
-                                <button
-                                    type="reset"
-                                    style={{ width: '10%' }}
-                                    onClick={this.reset}
-                                >
-                                    重置
-                                </button>
+                                </Button> &nbsp;
                             </div>
                         </div>
 
@@ -215,9 +194,7 @@ class Edit extends React.Component<any, IProps> {
     }
 
     render() {
-        return (
-            <this.FormBody />
-        )
+        return (<this.FormBody />)
     }
 }
 

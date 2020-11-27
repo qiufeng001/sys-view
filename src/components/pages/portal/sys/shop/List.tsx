@@ -1,30 +1,34 @@
 import React from 'react';
 import { Form, Input, Table } from 'antd';
-import BaseBtn from '../../../framework/BaseBtn';
-import baseUrl from "../../../../api/baseUrl";
-import baseConfig from "../../../../api/baseConfig";
+import BaseBtn from '../../../../framework/BaseBtn';
+import baseUrl from "../../../../../api/baseUrl";
+import baseConfig from "../../../../../api/baseconfig";
 import {
     showOprationState, validateHasParams, searchDatas, changeSeachParams,
-    executeOperate} from '../../../../static/framework/common';
-const menuUrl = baseUrl.portal.portal + "/menu/";
+    executeOperate} from '../../../../../static/framework/common';
+const menuUrl = baseUrl.portal.portal + "/shop/";
 const basePage = baseConfig.Config.page;
 
 const columns = [
     {
         title: '名称',
-        dataIndex: 'name',
+        dataIndex: 'name'
     },
     {
-        title: '编码',
-        dataIndex: 'code',
+        title: '编号',
+        dataIndex: 'code'
     },
     {
-        title: '路径',
-        dataIndex: 'url',
+        title: '负责人',
+        dataIndex: 'header'
     },
     {
-        title: '状态',
-        dataIndex: 'status',
+        title: '负责人电话',
+        dataIndex: 'phone'
+    },
+    {
+        title: '店面电话',
+        dataIndex: 'tel'
     }
 ];
 
@@ -178,7 +182,7 @@ class List extends React.Component<any, IProps> {
                                     <td><Input type="text" onChange={this.changeSeachParams.bind(this, "code")} /></td>
                                     <td>状态：</td>
                                     <td>
-                                        <select className="form-control" onChange={this.changeSeachParams.bind(this, "status")} >
+                                        <select style={{width: "70px"}} className="form-control" onChange={this.changeSeachParams.bind(this, "status")} >
                                             <option value={""}>...</option>
                                             <option value={1}>激活</option>
                                             <option value={0}>冻结</option>

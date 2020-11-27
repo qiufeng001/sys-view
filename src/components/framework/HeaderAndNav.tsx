@@ -10,12 +10,9 @@ class HeaderAndNav extends React.Component<any> {
 
     render() {
         return (
-            // <div className="contaner">
             <Layout className="layout">
                 <Head user={this.props.user} />
             </Layout>
-               
-            // </div>
         );
     }
 }

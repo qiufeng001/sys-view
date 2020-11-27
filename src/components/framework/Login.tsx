@@ -1,5 +1,5 @@
 import * as React from 'react';
-import baseConfig from "../../api/baseConfig";
+import baseConfig from "../../api/baseconfig";
 const baseUrl = baseConfig.Config.baseUrl;
 
 class Login extends React.Component<Login> {

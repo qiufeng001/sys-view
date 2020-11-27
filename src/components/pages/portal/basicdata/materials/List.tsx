@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Table,Button } from 'antd';
 import BaseBtn from '../../../../framework/BaseBtn';
 import baseUrl from "../../../../../api/baseUrl";
-import baseConfig from "../../../../../api/baseConfig";
+import baseConfig from "../../../../../api/baseconfig";
 import {
     showOprationState, validateHasParams, searchDatas, changeSeachParams,
     executeOperate} from '../../../../../static/framework/common';

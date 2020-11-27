@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import notFound from './components/framework/NotFound';
 import login from './components/framework/Login';
 import appRoute from './routes/Route';
-import index from './components/framework/Index';
+import index from './components/framework/index';
 
 export default () => (
     <BrowserRouter>
